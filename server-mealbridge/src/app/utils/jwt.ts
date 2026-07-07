@@ -4,7 +4,7 @@ import { IAuthUser } from "../middleware/checkAuth.js";
 
 export const generateToken = (payload: IAuthUser): string => {
   return jwt.sign(payload, config.jwt_secret, {
-    expiresIn: config.jwt_expires_in,
+    expiresIn: config.jwt_expires_in as jwt.SignOptions["expiresIn"],
   });
 };
 

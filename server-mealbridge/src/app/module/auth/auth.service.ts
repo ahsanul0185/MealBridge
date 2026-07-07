@@ -1,40 +1,34 @@
 import bcrypt from "bcrypt";
+import User from "../../models/User.js";
 import { generateToken } from "../../utils/jwt.js";
 import AppError from "../../errorHelpers/AppError.js";
+import { IRegisterPayload, ILoginPayload } from "./auth.interface.js";
 
-// TODO: Replace with actual Mongoose model
-const mockUsers: any[] = [];
-
-const register = async (payload: any) => {
+const register = async (payload: IRegisterPayload) => {
   const { email, password, ...rest } = payload;
 
-  // Check if user exists
-  const existingUser = mockUsers.find((u) => u.email === email);
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new AppError(409, "User already exists with this email");
   }
 
-  // Hash password
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const user = {
-    id: String(mockUsers.length + 1),
+  const user = await User.create({
     email,
     password: hashedPassword,
     ...rest,
-  };
-
-  mockUsers.push(user);
+  });
 
   const token = generateToken({
-    userId: user.id,
+    userId: String(user._id),
     email: user.email,
     role: user.role,
   });
 
   return {
     user: {
-      id: user.id,
+      id: String(user._id),
       name: user.name,
       email: user.email,
       role: user.role,
@@ -43,10 +37,10 @@ const register = async (payload: any) => {
   };
 };
 
-const login = async (payload: any) => {
+const login = async (payload: ILoginPayload) => {
   const { email, password } = payload;
 
-  const user = mockUsers.find((u) => u.email === email);
+  const user = await User.findOne({ email }).select("+password");
   if (!user) {
     throw new AppError(401, "Invalid email or password");
   }
@@ -57,14 +51,14 @@ const login = async (payload: any) => {
   }
 
   const token = generateToken({
-    userId: user.id,
+    userId: String(user._id),
     email: user.email,
     role: user.role,
   });
 
   return {
     user: {
-      id: user.id,
+      id: String(user._id),
       name: user.name,
       email: user.email,
       role: user.role,
