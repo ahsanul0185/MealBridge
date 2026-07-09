@@ -42,7 +42,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           rows={rows}
           maxLength={maxLength}
-          className={`focus-ring block rounded-lg border bg-white p-3 text-sm text-dark-gray placeholder:text-text-muted resize-y ${errorClass}`}
+          className={`focus-ring block w-full rounded-lg border bg-white p-3 text-sm text-dark-gray placeholder:text-text-muted resize-y ${errorClass}`}
           {...props}
         />
         <div className="mt-1 flex items-center justify-between">

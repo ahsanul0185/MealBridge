@@ -51,7 +51,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           )}
           <select
             ref={ref}
-            className={`focus-ring block appearance-none rounded-lg border bg-white py-2.5 text-sm text-dark-gray ${
+            className={`focus-ring block w-full appearance-none rounded-lg border bg-white py-2.5 text-sm text-dark-gray ${
               leftIcon ? "pl-10" : "pl-3"
             } pr-10 ${errorClass}`}
             {...props}
