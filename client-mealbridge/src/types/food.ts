@@ -10,7 +10,7 @@ export type FoodType = "Veg" | "Non-Veg";
 
 export interface FoodPost {
   id: string;
-  restaurant_id: string | { id: string; name: string; email: string; phone: string; area: string };
+  restaurant_id: string;
   food_name: string;
   food_type: FoodType;
   quantity: number;
@@ -21,7 +21,24 @@ export interface FoodPost {
   image_url?: string;
   note?: string;
   status: FoodStatus;
-  claimed_by?: string | { id: string; name: string; email: string; phone: string; area: string };
-  created_at: string;
-  updated_at: string;
+  claimed_by?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface FoodFilters {
+  area?: string;
+  food_type?: FoodType;
+}
+
+export interface CreateFoodData {
+  food_name: string;
+  food_type: FoodType;
+  quantity: number;
+  pickup_address: string;
+  area: string;
+  prepared_time: string;
+  safe_until_time: string;
+  note?: string;
+  image?: File;
 }
