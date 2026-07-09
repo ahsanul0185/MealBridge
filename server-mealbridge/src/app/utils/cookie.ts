@@ -10,5 +10,9 @@ export const setCookie = (res: Response, name: string, value: string, options?: 
 };
 
 export const clearCookie = (res: Response, name: string) => {
-  res.clearCookie(name);
+  res.clearCookie(name, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
 };

@@ -18,13 +18,19 @@ declare global {
 }
 
 const checkAuth = (req: Request, _res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
+  // Try cookie first, then fallback to Authorization header
+  let token: string | undefined = req.cookies?.token;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next(new AppError(401, "You are not logged in. Please log in to get access."));
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
   }
 
-  const token = authHeader.split(" ")[1];
+  if (!token) {
+    return next(new AppError(401, "You are not logged in. Please log in to get access."));
+  }
 
   try {
     const decoded = jwt.verify(token, config.jwt_secret) as IAuthUser;

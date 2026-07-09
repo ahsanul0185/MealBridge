@@ -18,7 +18,7 @@ app.use("/uploads", express.static("uploads"));
 
 // Health check
 app.get("/", (req, res) => {
-  res.json({ message: "MealBridge API is running 🍽️" });
+  res.json({ message: "MealBridge API is running" });
 });
 
 // API Routes
