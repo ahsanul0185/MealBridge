@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthHeader } from "../../components/layout/AuthHeader";
-import { useAuth } from "../../contexts/AuthContext";
+import { login } from "../../services/auth.service";
 import { useToast } from "../../contexts/ToastContext";
 import { Button } from "../../components/common/Button";
 
@@ -12,7 +11,6 @@ interface FormErrors {
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
   const { addToast } = useToast();
 
   const [email, setEmail] = useState("");
@@ -39,11 +37,13 @@ export function LoginPage() {
 
     setIsSubmitting(true);
     try {
-      await login(email.trim(), password);
+      const result = await login({ email: email.trim(), password });
       addToast("Welcome back!", "success");
-      navigate("/dashboard");
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Invalid email or password.";
+      // Navigate to role-based dashboard
+      const role = result.data.user.role;
+      navigate(`/${role}/dashboard`);
+    } catch (err: any) {
+      const message = err?.response?.data?.message || err?.message || "Invalid email or password.";
       addToast(message, "error");
     } finally {
       setIsSubmitting(false);
@@ -51,19 +51,10 @@ export function LoginPage() {
   };
 
   return (
-
-    <>
-        <AuthHeader
-          rightText="New here?"
-          rightButtonText="Create Account"
-          rightButtonHref="/register"
-        />
-
-    <div className="flex min-h-screen bg-warm-white px-12 items-start justify-center">
+    <div className="flex min-h-screen bg-warm-white">
       {/* Left Side - Hero */}
       <div className="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-white lg:flex">
-
-        <div >
+        <div>
           <h1 className="text-5xl font-bold leading-[1.15] tracking-tight text-dark-gray">
             Welcome
           </h1>
@@ -74,7 +65,6 @@ export function LoginPage() {
             Sign in to continue rescuing food and making a difference in your community.
           </p>
         </div>
-
         <div className="mt-8 flex flex-1 items-end justify-center">
           <img
             src="/login-page-image.png"
@@ -86,10 +76,8 @@ export function LoginPage() {
 
       {/* Right Side - Form */}
       <div className="flex flex-1 flex-col">
-
         <div className="flex flex-1 items-center justify-center px-4 pb-8 sm:px-8">
           <div className="w-full max-w-[620px] rounded-2xl border border-border bg-white p-8 shadow-card sm:p-10">
-
             <h2 className="text-center text-2xl font-bold text-dark-gray">Sign in</h2>
             <p className="mb-8 mt-1 text-center text-sm text-text-secondary">
               Welcome back to MealBridge.
@@ -169,6 +157,5 @@ export function LoginPage() {
         </div>
       </div>
     </div>
-  </>
   );
 }

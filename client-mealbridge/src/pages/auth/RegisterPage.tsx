@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { AuthHeader } from "../../components/layout/AuthHeader";
-import { useAuth } from "../../contexts/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
+import { register } from "../../services/auth.service";
 import { useToast } from "../../contexts/ToastContext";
 import { Button } from "../../components/common/Button";
-import { Link, useNavigate } from "react-router-dom";
 
 interface FormErrors {
   name?: string;
@@ -18,7 +17,6 @@ interface FormErrors {
 
 export function RegisterPage() {
   const navigate = useNavigate();
-  const { register } = useAuth();
   const { addToast } = useToast();
 
   const [role, setRole] = useState<"restaurant" | "ngo">("restaurant");
@@ -67,7 +65,7 @@ export function RegisterPage() {
 
     setIsSubmitting(true);
     try {
-      await register({
+      const result = await register({
         name: name.trim(),
         email: email.trim(),
         password,
@@ -77,9 +75,10 @@ export function RegisterPage() {
         area: area.trim(),
       });
       addToast("Account created successfully! Welcome to MealBridge.", "success");
-      navigate("/dashboard");
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to create account. Please try again.";
+      const userRole = result.data.user.role;
+      navigate(`/${userRole}/dashboard`);
+    } catch (err: any) {
+      const message = err?.response?.data?.message || err?.message || "Failed to create account. Please try again.";
       addToast(message, "error");
     } finally {
       setIsSubmitting(false);
@@ -87,18 +86,9 @@ export function RegisterPage() {
   };
 
   return (
-    <>
-    
-            <AuthHeader
-          rightText="Already registered?"
-          rightButtonText="Sign In"
-          rightButtonHref="/login"
-        />
-    <div className="flex items-start justify-between px-12 w-full min-h-screen bg-warm-white">
+    <div className="flex min-h-screen bg-warm-white">
       {/* Left Side - Hero */}
       <div className="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-white lg:flex">
-
-        {/* Hero Text */}
         <div>
           <h1 className="text-5xl font-bold leading-[1.15] tracking-tight text-dark-gray">
             Good food
@@ -110,8 +100,6 @@ export function RegisterPage() {
             MealBridge connects restaurants with NGOs to rescue extra food and deliver it to people who need it most.
           </p>
         </div>
-
-        {/* Hero Image */}
         <div className="flex flex-1 items-end justify-center">
           <img
             src="/login-page-image.png"
@@ -123,12 +111,8 @@ export function RegisterPage() {
 
       {/* Right Side - Form */}
       <div className="flex flex-1 flex-col">
-
-
-        {/* Form Card */}
         <div className="flex flex-1 items-center justify-center px-4 pb-8 sm:px-8">
           <div className="w-full max-w-[620px] rounded-2xl border border-border bg-white p-8 shadow-card sm:p-10">
-
             <h2 className="text-center text-2xl font-bold text-dark-gray">Create your account</h2>
             <p className="mb-8 mt-1 text-center text-sm text-text-secondary">
               Join MealBridge and make a difference.
@@ -393,8 +377,5 @@ export function RegisterPage() {
         </div>
       </div>
     </div>
-
-        
-    </>
   );
 }

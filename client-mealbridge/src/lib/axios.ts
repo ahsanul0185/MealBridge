@@ -8,17 +8,4 @@ const api = axios.create({
   },
 });
 
-// Response interceptor for global error handling
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // 401 from backend means the user is not authenticated
-    // The cookie-based auth will handle this — redirect to login
-    if (error.response?.status === 401) {
-      window.location.href = "/login";
-    }
-    return Promise.reject(error);
-  }
-);
-
 export default api;

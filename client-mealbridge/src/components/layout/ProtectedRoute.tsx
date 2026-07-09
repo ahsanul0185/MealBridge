@@ -1,28 +1,44 @@
-import { Navigate } from "react-router-dom";
-import type { ReactNode } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getProfile } from "../../services/auth.service";
+import type { User } from "../../services/auth.service";
+import { LoadingSpinner } from "../common/LoadingSpinner";
 
 interface ProtectedRouteProps {
-  children: ReactNode;
+  children: React.ReactNode;
   allowedRole?: "restaurant" | "ngo";
 }
 
 export function ProtectedRoute({ children, allowedRole }: ProtectedRouteProps) {
-  const token = localStorage.getItem("token");
-  const userStr = localStorage.getItem("user");
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
-  if (!token) {
+  useEffect(() => {
+    getProfile()
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch(() => {
+        setUser(null);
+      })
+      .finally(() => setIsLoading(false));
+  }, [location.pathname]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-warm-white">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRole && userStr) {
-    try {
-      const user = JSON.parse(userStr);
-      if (user.role !== allowedRole) {
-        return <Navigate to={`/${user.role}/dashboard`} replace />;
-      }
-    } catch {
-      return <Navigate to="/login" replace />;
-    }
+  if (allowedRole && user.role !== allowedRole) {
+    return <Navigate to={`/${user.role}/dashboard`} replace />;
   }
 
   return <>{children}</>;
