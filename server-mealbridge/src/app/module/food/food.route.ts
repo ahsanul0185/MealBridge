@@ -10,6 +10,12 @@ const router = Router();
 
 // NGO routes
 router.get("/available", foodController.getAvailableFood);
+router.get(
+  "/my-posts",
+  checkAuth,
+  restrictTo("restaurant"),
+  foodController.getMyPosts
+);
 router.get("/:id", foodController.getFoodById);
 router.post(
   "/:id/claim",
@@ -27,12 +33,7 @@ router.post(
   validateRequest(foodValidation.createFood),
   foodController.createFood
 );
-router.get(
-  "/my-posts",
-  checkAuth,
-  restrictTo("restaurant"),
-  foodController.getMyPosts
-);
+
 router.put(
   "/:id",
   checkAuth,

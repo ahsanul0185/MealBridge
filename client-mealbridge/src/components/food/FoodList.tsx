@@ -1,7 +1,7 @@
 import type { FoodPost } from "../../types/food";
 import { FoodCard } from "./FoodCard";
 import { EmptyState } from "../common/EmptyState";
-import { Pagination } from "../common/Breadcrumb";
+import { Pagination } from "../common/Pagination";
 
 interface FoodListProps {
   foods: FoodPost[];
