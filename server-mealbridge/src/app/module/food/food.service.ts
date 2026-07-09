@@ -12,7 +12,10 @@ const createFood = async (payload: any, restaurantId: string, imageUrl?: string)
   return food;
 };
 
-const getAvailableFood = async (filters: { area?: string; food_type?: string }) => {
+const getAvailableFood = async (
+  filters: { area?: string; food_type?: string },
+  pagination: { skip: number; limit: number }
+) => {
   const query: any = { status: "Available" };
 
   if (filters.area) {
@@ -25,11 +28,14 @@ const getAvailableFood = async (filters: { area?: string; food_type?: string }) 
   // Also exclude expired items from available listing
   query.safe_until_time = { $gte: new Date() };
 
+  const total = await FoodPost.countDocuments(query);
   const food = await FoodPost.find(query)
     .populate("restaurant_id", "name email phone area")
-    .sort({ created_at: -1 });
+    .sort({ created_at: -1 })
+    .skip(pagination.skip)
+    .limit(pagination.limit);
 
-  return food;
+  return { data: food, total };
 };
 
 const getFoodById = async (id: string) => {
@@ -49,12 +55,19 @@ const getFoodById = async (id: string) => {
   return food;
 };
 
-const getMyPosts = async (restaurantId: string) => {
-  const posts = await FoodPost.find({ restaurant_id: restaurantId })
+const getMyPosts = async (
+  restaurantId: string,
+  pagination: { skip: number; limit: number }
+) => {
+  const query = { restaurant_id: restaurantId };
+  const total = await FoodPost.countDocuments(query);
+  const posts = await FoodPost.find(query)
     .populate("claimed_by", "name email phone area")
-    .sort({ created_at: -1 });
+    .sort({ created_at: -1 })
+    .skip(pagination.skip)
+    .limit(pagination.limit);
 
-  return posts;
+  return { data: posts, total };
 };
 
 const updateFood = async (id: string, restaurantId: string, payload: any) => {

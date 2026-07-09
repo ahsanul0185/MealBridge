@@ -2,15 +2,18 @@ import { Request, Response } from "express";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 import claimService from "./claim.service.js";
+import { getPagination, getPaginationMeta } from "../../utils/paginate.js";
 
 const getMyClaims = catchAsync(async (req: Request, res: Response) => {
   const ngoId = req.user!.userId;
-  const result = await claimService.getMyClaims(ngoId);
+  const { page, limit, skip } = getPagination(req);
+  const { data, total } = await claimService.getMyClaims(ngoId, { skip, limit });
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "My claims fetched successfully",
-    data: result,
+    meta: getPaginationMeta({ page, limit, total }),
+    data,
   });
 });
 

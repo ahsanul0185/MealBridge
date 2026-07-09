@@ -3,8 +3,13 @@ import Claim from "../../models/Claim.js";
 import FoodPost from "../../models/FoodPost.js";
 import AppError from "../../errorHelpers/AppError.js";
 
-const getMyClaims = async (ngoId: string) => {
-  const claims = await Claim.find({ ngo_id: ngoId })
+const getMyClaims = async (
+  ngoId: string,
+  pagination: { skip: number; limit: number }
+) => {
+  const query = { ngo_id: ngoId };
+  const total = await Claim.countDocuments(query);
+  const claims = await Claim.find(query)
     .populate({
       path: "food_post_id",
       populate: {
@@ -12,9 +17,11 @@ const getMyClaims = async (ngoId: string) => {
         select: "name email phone area address",
       },
     })
-    .sort({ created_at: -1 });
+    .sort({ created_at: -1 })
+    .skip(pagination.skip)
+    .limit(pagination.limit);
 
-  return claims;
+  return { data: claims, total };
 };
 
 const updateStatus = async (claimId: string, ngoId: string, pickupStatus: string) => {

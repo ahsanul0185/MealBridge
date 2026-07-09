@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 import foodService from "./food.service.js";
+import { getPagination, getPaginationMeta } from "../../utils/paginate.js";
 
 const createFood = catchAsync(async (req: Request, res: Response) => {
   const restaurantId = req.user!.userId;
@@ -20,12 +21,14 @@ const createFood = catchAsync(async (req: Request, res: Response) => {
 
 const getAvailableFood = catchAsync(async (req: Request, res: Response) => {
   const { area, food_type } = req.query as { area?: string; food_type?: string };
-  const result = await foodService.getAvailableFood({ area, food_type });
+  const { page, limit, skip } = getPagination(req);
+  const { data, total } = await foodService.getAvailableFood({ area, food_type }, { skip, limit });
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Available food fetched successfully",
-    data: result,
+    meta: getPaginationMeta({ page, limit, total }),
+    data,
   });
 });
 
@@ -41,12 +44,14 @@ const getFoodById = catchAsync(async (req: Request, res: Response) => {
 
 const getMyPosts = catchAsync(async (req: Request, res: Response) => {
   const restaurantId = req.user!.userId;
-  const result = await foodService.getMyPosts(restaurantId);
+  const { page, limit, skip } = getPagination(req);
+  const { data, total } = await foodService.getMyPosts(restaurantId, { skip, limit });
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "My posts fetched successfully",
-    data: result,
+    meta: getPaginationMeta({ page, limit, total }),
+    data,
   });
 });
 

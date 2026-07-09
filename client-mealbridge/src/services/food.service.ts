@@ -3,6 +3,8 @@ import api from "../lib/axios";
 export interface FoodFilters {
   area?: string;
   food_type?: string;
+  page?: number;
+  limit?: number;
 }
 
 export const createFood = (data: FormData) =>
@@ -16,8 +18,8 @@ export const getAvailableFood = (filters?: FoodFilters) =>
 export const getFoodById = (id: string) =>
   api.get(`/food/${id}`);
 
-export const getMyPosts = () =>
-  api.get("/food/my-posts");
+export const getMyPosts = (page?: number, limit?: number) =>
+  api.get("/food/my-posts", { params: { page, limit } });
 
 export const updateFood = (id: string, data: any) =>
   api.put(`/food/${id}`, data);

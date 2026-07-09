@@ -1,7 +1,7 @@
 import api from "../lib/axios";
 
-export const getMyClaims = () =>
-  api.get("/claims/my-claims");
+export const getMyClaims = (page?: number, limit?: number) =>
+  api.get("/claims/my-claims", { params: { page, limit } });
 
 export const updatePickupStatus = (
   id: string,
