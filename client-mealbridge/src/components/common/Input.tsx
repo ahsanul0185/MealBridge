@@ -7,11 +7,12 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   fullWidth?: boolean;
+  labelClassName?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    { label, error, helperText, leftIcon, rightIcon, fullWidth = true, className = "", ...props },
+    { label, error, helperText, leftIcon, rightIcon, fullWidth = true, className = "", labelClassName, ...props },
     ref
   ) => {
     const widthClass = fullWidth ? "w-full" : "";
@@ -22,7 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={`${widthClass} ${className}`}>
         {label && (
-          <label className="mb-1.5 block text-sm font-medium text-dark-gray">
+          <label className={`mb-1.5 block ${labelClassName || "text-sm font-medium text-dark-gray"}`}>
             {label}
             {props.required && <span className="ml-0.5 text-red-500">*</span>}
           </label>

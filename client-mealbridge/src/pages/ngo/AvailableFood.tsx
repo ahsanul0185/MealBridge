@@ -31,6 +31,8 @@ export function AvailableFood() {
   const areaParam = searchParams.get("area") || "";
   const foodTypeParam = searchParams.get("food_type") || "";
   const searchParam = searchParams.get("search") || "";
+  const quantityParam = searchParams.get("quantity") || "";
+  const safeUntilParam = searchParams.get("safe_until") || "";
 
   const [foods, setFoods] = useState<FoodPost[]>([]);
   const [meta, setMeta] = useState<Meta | null>(null);
@@ -39,6 +41,7 @@ export function AvailableFood() {
 
   // Local controlled search value (debounced to URL)
   const [searchInput, setSearchInput] = useState(searchParam);
+  const [quantityInput, setQuantityInput] = useState(quantityParam);
 
   const fetchFoods = useCallback(async () => {
     setIsLoading(true);
@@ -49,6 +52,8 @@ export function AvailableFood() {
         area: areaParam || undefined,
         food_type: (foodTypeParam as any) || undefined,
         search: searchParam || undefined,
+        quantity: quantityParam ? parseInt(quantityParam, 10) : undefined,
+        safe_until: safeUntilParam || undefined,
       });
 
       // New shape: response.data.data = { items, stats }, response.data.meta = { total, ... }
@@ -75,16 +80,17 @@ export function AvailableFood() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, areaParam, foodTypeParam, searchParam]);
+  }, [currentPage, areaParam, foodTypeParam, searchParam, quantityParam, safeUntilParam]);
 
   useEffect(() => {
     fetchFoods();
   }, [fetchFoods]);
 
-  // Sync searchInput from URL on mount
+  // Sync inputs from URL on mount
   useEffect(() => {
     setSearchInput(searchParam);
-  }, [searchParam]);
+    setQuantityInput(quantityParam);
+  }, [searchParam, quantityParam]);
 
   // Auto-debounce searchInput to update the URL
   useEffect(() => {
@@ -95,6 +101,16 @@ export function AvailableFood() {
     }, 400); // 400ms debounce
     return () => clearTimeout(timer);
   }, [searchInput, searchParam]);
+
+  // Auto-debounce quantityInput to update the URL
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (quantityInput !== quantityParam) {
+        updateParam("quantity", quantityInput);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [quantityInput, quantityParam]);
 
   const updateParam = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -189,10 +205,12 @@ export function AvailableFood() {
       </div>
 
       {/* Filters row */}
-      <div className="mb-6 flex flex-wrap items-center gap-3">
+      <div className="mb-6 flex flex-wrap items-end gap-3">
         {/* Search */}
         <div className="min-w-0 flex-1 sm:max-w-sm">
           <Input
+            label="Search Foods"
+            labelClassName="text-[12px] font-medium text-gray-500"
             placeholder="Search by food name..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -220,6 +238,8 @@ export function AvailableFood() {
 
         {/* Area filter */}
         <Input
+          label="Location/Area"
+          labelClassName="text-[12px] font-medium text-gray-500"
           placeholder="Filter by area..."
           value={areaParam}
           onChange={(e) => updateParam("area", e.target.value)}
@@ -233,31 +253,60 @@ export function AvailableFood() {
           }
         />
 
+        {/* Quantity filter */}
+        <Input
+          label="Min. Plates"
+          labelClassName="text-[12px] font-medium text-gray-500"
+          type="number"
+          placeholder="Min Plates..."
+          value={quantityInput}
+          onChange={(e) => setQuantityInput(e.target.value)}
+          fullWidth={false}
+          className="w-32"
+        />
+
+        {/* Safe Until filter */}
+        <div className="flex flex-col">
+          <Input
+            label="Safe Until"
+            labelClassName="text-[12px] font-medium text-gray-500"
+            type="datetime-local"
+            value={safeUntilParam}
+            onChange={(e) => updateParam("safe_until", e.target.value)}
+            fullWidth={false}
+            className="w-[200px]"
+          />
+        </div>
+
         {/* Food type toggle */}
-        <div className="flex overflow-hidden rounded-lg border border-border bg-white">
-          {["Veg", "Non-Veg"].map((type) => (
-            <button
-              key={type}
-              onClick={() => handleFoodTypeFilter(type)}
-              className={`px-4 py-2.5 text-sm font-medium transition-colors ${
-                foodTypeParam === type
-                  ? "bg-primary text-white"
-                  : "text-text-secondary hover:bg-warm-50 hover:text-dark-gray"
-              }`}
-            >
-              {type}
-            </button>
-          ))}
+        <div className="flex flex-col">
+          <label className="mb-1.5 block text-[12px] font-medium text-gray-500">Food Type</label>
+          <div className="flex overflow-hidden rounded-lg border border-border bg-white h-[42px]">
+            {["Veg", "Non-Veg"].map((type) => (
+              <button
+                key={type}
+                onClick={() => handleFoodTypeFilter(type)}
+                className={`px-4 text-sm font-medium transition-colors ${
+                  foodTypeParam === type
+                    ? "bg-primary text-white"
+                    : "text-text-secondary hover:bg-warm-50 hover:text-dark-gray"
+                }`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Clear all filters */}
-        {(areaParam || foodTypeParam || searchParam) && (
+        {(areaParam || foodTypeParam || searchParam || quantityParam || safeUntilParam) && (
           <button
             onClick={() => {
               setSearchInput("");
+              setQuantityInput("");
               setSearchParams(new URLSearchParams());
             }}
-            className="text-sm text-text-muted underline hover:text-dark-gray"
+            className="mb-3 text-sm text-text-muted underline hover:text-dark-gray"
           >
             Clear filters
           </button>
