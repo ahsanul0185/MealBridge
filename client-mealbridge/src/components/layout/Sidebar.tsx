@@ -4,6 +4,7 @@ import type { User } from "../../services/auth.service";
 
 interface SidebarProps {
   user: User;
+  onNavigate?: () => void;
 }
 
 const iconMap: Record<string, React.ReactNode> = {
@@ -34,17 +35,17 @@ const iconMap: Record<string, React.ReactNode> = {
   ),
 };
 
-export function Sidebar({ user }: SidebarProps) {
+export function Sidebar({ user, onNavigate }: SidebarProps) {
   const location = useLocation();
   const navItems = getNavItems(user.role);
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-white">
+    <aside className="flex h-full flex-col bg-white">
       {/* Logo */}
       <div className="flex h-16 items-center px-6">
-        <Link to="/" className="flex items-center gap-2.5">
+        <Link to="/" className="flex items-center gap-2.5" onClick={onNavigate}>
           <img src="/logo-mealbridge.png" alt="MealBridge" className="h-10 object-contain" />
         </Link>
       </div>
@@ -57,6 +58,7 @@ export function Sidebar({ user }: SidebarProps) {
             <Link
               key={item.path}
               to={item.path}
+              onClick={onNavigate}
               className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 active
                   ? "bg-green-50 text-green-700"
