@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthHeader } from "../../components/layout/AuthHeader";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { Button } from "../../components/common/Button";
@@ -50,15 +51,19 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-warm-white">
-      {/* Left Side - Hero */}
-      <div className="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-white p-10 lg:flex">
-        <div className="flex items-center gap-2.5">
-          <img src="/logo-mealbridge.png" alt="MealBridge" className="h-10 w-10 object-contain" />
-          <span className="text-xl font-bold text-primary">MealBridge</span>
-        </div>
 
-        <div className="mt-16">
+    <>
+        <AuthHeader
+          rightText="New here?"
+          rightButtonText="Create Account"
+          rightButtonHref="/register"
+        />
+
+    <div className="flex min-h-screen bg-warm-white px-12 items-start justify-center">
+      {/* Left Side - Hero */}
+      <div className="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-white lg:flex">
+
+        <div >
           <h1 className="text-5xl font-bold leading-[1.15] tracking-tight text-dark-gray">
             Welcome
           </h1>
@@ -81,15 +86,6 @@ export function LoginPage() {
 
       {/* Right Side - Form */}
       <div className="flex flex-1 flex-col">
-        <div className="flex items-center justify-end gap-4 px-8 py-6 sm:px-12">
-          <span className="text-sm text-text-secondary">New here?</span>
-          <Link
-            to="/register"
-            className="rounded-lg border-2 border-primary px-5 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary-50"
-          >
-            Create Account
-          </Link>
-        </div>
 
         <div className="flex flex-1 items-center justify-center px-4 pb-8 sm:px-8">
           <div className="w-full max-w-[620px] rounded-2xl border border-border bg-white p-8 shadow-card sm:p-10">
@@ -173,5 +169,6 @@ export function LoginPage() {
         </div>
       </div>
     </div>
+  </>
   );
 }

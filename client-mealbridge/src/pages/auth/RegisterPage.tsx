@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { AuthHeader } from "../../components/layout/AuthHeader";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { Button } from "../../components/common/Button";
+import { Link, useNavigate } from "react-router-dom";
 
 interface FormErrors {
   name?: string;
@@ -86,17 +87,19 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-warm-white">
+    <>
+    
+            <AuthHeader
+          rightText="Already registered?"
+          rightButtonText="Sign In"
+          rightButtonHref="/login"
+        />
+    <div className="flex items-start justify-between px-12 w-full min-h-screen bg-warm-white">
       {/* Left Side - Hero */}
-      <div className="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-white p-10 lg:flex">
-        {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <img src="/logo-mealbridge.png" alt="MealBridge" className="h-10 w-10 object-contain" />
-          <span className="text-xl font-bold text-primary">MealBridge</span>
-        </div>
+      <div className="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-white lg:flex">
 
         {/* Hero Text */}
-        <div className="mt-16">
+        <div>
           <h1 className="text-5xl font-bold leading-[1.15] tracking-tight text-dark-gray">
             Good food
           </h1>
@@ -120,16 +123,7 @@ export function RegisterPage() {
 
       {/* Right Side - Form */}
       <div className="flex flex-1 flex-col">
-        {/* Top Bar */}
-        <div className="flex items-center justify-end gap-4 px-8 py-6 sm:px-12">
-          <span className="text-sm text-text-secondary">Already registered?</span>
-          <Link
-            to="/login"
-            className="rounded-lg border-2 border-primary px-5 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary-50"
-          >
-            Sign In
-          </Link>
-        </div>
+
 
         {/* Form Card */}
         <div className="flex flex-1 items-center justify-center px-4 pb-8 sm:px-8">
@@ -399,5 +393,8 @@ export function RegisterPage() {
         </div>
       </div>
     </div>
+
+        
+    </>
   );
 }
