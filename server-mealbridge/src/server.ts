@@ -25,7 +25,7 @@ startServer();
 process.on("unhandledRejection", (err) => {
   console.error("UNHANDLED REJECTION! 💥 Shutting down...");
   console.error(err);
-  mongoose.connection.close(() => {
+  mongoose.connection.close().then(() => {
     process.exit(1);
   });
 });
