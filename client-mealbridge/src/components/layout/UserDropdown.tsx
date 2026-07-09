@@ -79,7 +79,7 @@ export function UserDropdown({ user }: UserDropdownProps) {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-48 rounded-lg border border-border bg-white shadow-lg">
+        <div className="absolute right-0 top-full overflow-clip mt-2 w-48 rounded-lg border border-border bg-white shadow-lg">
           <button
             onClick={handleDashboard}
             className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-dark-gray transition-colors hover:bg-gray-50"

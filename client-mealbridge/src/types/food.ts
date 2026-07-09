@@ -19,6 +19,7 @@ export interface FoodPost {
   prepared_time: string;
   safe_until_time: string;
   image_url?: string;
+  description?: string;
   note?: string;
   status: FoodStatus;
   claimed_by?: string;
