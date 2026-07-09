@@ -1,8 +1,8 @@
-import { useState } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../services/auth.service";
-import { useToast } from "../../contexts/ToastContext";
 import { Button } from "../../components/common/Button";
+import { useState } from "react";
 
 interface FormErrors {
   email?: string;
@@ -11,7 +11,6 @@ interface FormErrors {
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { addToast } = useToast();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,13 +37,13 @@ export function LoginPage() {
     setIsSubmitting(true);
     try {
       const result = await login({ email: email.trim(), password });
-      addToast("Welcome back!", "success");
+      toast.success("Login successful!");
       // Navigate to role-based dashboard
       const role = result.data.user.role;
       navigate(`/${role}/dashboard`);
     } catch (err: any) {
       const message = err?.response?.data?.message || err?.message || "Invalid email or password.";
-      addToast(message, "error");
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }

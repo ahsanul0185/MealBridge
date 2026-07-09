@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ToastProvider } from "./contexts/ToastContext";
+import { ToastProvider } from "./contexts/ToastProvider";
 import { Header } from "./components/layout/Header";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { LandingPage } from "./pages/LandingPage";

@@ -1,11 +1,11 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getProfile, logout } from "../../services/auth.service";
+import { getProfile } from "../../services/auth.service";
 import type { User } from "../../services/auth.service";
+import { UserDropdown } from "./UserDropdown";
 
 export function Header() {
   const location = useLocation();
-  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -14,7 +14,6 @@ export function Header() {
   const isAuthenticated = !!user;
 
   useEffect(() => {
-    // Don't fetch profile on auth pages to avoid unnecessary 401s
     if (isLoginPage || isRegisterPage) {
       setIsLoading(false);
       return;
@@ -29,16 +28,6 @@ export function Header() {
       })
       .finally(() => setIsLoading(false));
   }, [isLoginPage, isRegisterPage, location.pathname]);
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch {
-      // ignore
-    }
-    setUser(null);
-    navigate("/login");
-  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-white/90 backdrop-blur-sm">
@@ -116,22 +105,9 @@ export function Header() {
             </>
           )}
 
-          {/* Authenticated — show user info + logout */}
+          {/* Authenticated — show user dropdown */}
           {isAuthenticated && user && (
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-text-secondary">
-                {user.name}
-              </span>
-              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary capitalize">
-                {user.role}
-              </span>
-              <button
-                onClick={handleLogout}
-                className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:text-primary"
-              >
-                Logout
-              </button>
-            </div>
+            <UserDropdown user={user} />
           )}
         </div>
       </div>

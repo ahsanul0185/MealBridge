@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../services/auth.service";
-import { useToast } from "../../contexts/ToastContext";
 import { Button } from "../../components/common/Button";
+import toast from "react-hot-toast";
 
 interface FormErrors {
   name?: string;
@@ -17,7 +17,6 @@ interface FormErrors {
 
 export function RegisterPage() {
   const navigate = useNavigate();
-  const { addToast } = useToast();
 
   const [role, setRole] = useState<"restaurant" | "ngo">("restaurant");
   const [name, setName] = useState("");
@@ -74,12 +73,12 @@ export function RegisterPage() {
         address: address.trim(),
         area: area.trim(),
       });
-      addToast("Account created successfully! Welcome to MealBridge.", "success");
+      toast.success("Account created successfully! Welcome to MealBridge.");
       const userRole = result.data.user.role;
       navigate(`/${userRole}/dashboard`);
     } catch (err: any) {
       const message = err?.response?.data?.message || err?.message || "Failed to create account. Please try again.";
-      addToast(message, "error");
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
