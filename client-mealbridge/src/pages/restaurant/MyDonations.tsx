@@ -4,12 +4,14 @@ import toast from "react-hot-toast";
 import { PageHeader } from "../../components/common/PageHeader";
 import { DataTable } from "../../components/common/DataTable";
 import { Pagination } from "../../components/common/Pagination";
+import { DropdownMenu } from "../../components/common/DropdownMenu";
+import { Drawer } from "../../components/common/Drawer";
+import { FoodDetailPanel } from "../../components/food/FoodDetailPanel";
 import { StatusBadge, FoodTypeBadge } from "../../components/common/Badge";
-import { Button } from "../../components/common/Button";
 import { ConfirmDialog } from "../../components/common/Modal";
 import { EmptyState } from "../../components/common/EmptyState";
 import { LoadingSpinner } from "../../components/common/LoadingSpinner";
-import { getMyPosts, cancelFood } from "../../services/food.service";
+import { getMyPosts, getFoodById, cancelFood } from "../../services/food.service";
 import { formatDate } from "../../utils/helpers";
 import type { FoodPost, FoodStatus } from "../../types/food";
 
@@ -38,6 +40,11 @@ export function MyDonations() {
   const [isLoading, setIsLoading] = useState(true);
   const [cancelId, setCancelId] = useState<string | null>(null);
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [detailData, setDetailData] = useState<any>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+
   useEffect(() => {
     const fetchPosts = async () => {
       setIsLoading(true);
@@ -56,6 +63,32 @@ export function MyDonations() {
 
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    if (!selectedId) {
+      setDetailData(null);
+      return;
+    }
+
+    const fetchDetail = async () => {
+      setDetailLoading(true);
+      try {
+        const response = await getFoodById(selectedId);
+        const data = response.data?.data ?? response.data;
+        if (data && typeof data === "object" && !Array.isArray(data)) {
+          setDetailData(data);
+        } else {
+          toast.error("Donation details not found");
+        }
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || "Failed to load donation details");
+      } finally {
+        setDetailLoading(false);
+      }
+    };
+
+    fetchDetail();
+  }, [selectedId]);
 
   const filteredPosts = useMemo(() => {
     if (currentStatus === "All") return allPosts;
@@ -92,6 +125,18 @@ export function MyDonations() {
     setSearchParams(params);
   };
 
+  const openDrawer = (post: FoodPost) => {
+    const id = post.id || (post as any)._id;
+    setSelectedId(id);
+    setDetailData(post);
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+    setTimeout(() => setSelectedId(null), 300);
+  };
+
   const handleCancel = async () => {
     if (!cancelId) return;
     try {
@@ -100,6 +145,9 @@ export function MyDonations() {
       setAllPosts((prev) =>
         prev.map((post) => (post.id === cancelId ? { ...post, status: "Cancelled" as FoodStatus } : post))
       );
+      if (selectedId === cancelId && detailData) {
+        setDetailData({ ...detailData, status: "Cancelled" });
+      }
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to cancel donation");
     } finally {
@@ -115,185 +163,239 @@ export function MyDonations() {
   const showingStart = filteredPosts.length === 0 ? 0 : startIndex + 1;
   const showingEnd = Math.min(startIndex + LIMIT, filteredPosts.length);
 
-  return (
-    <div>
-      <PageHeader
-        title="My Donations"
-        subtitle="Track and manage all your food donations."
-        action={{
-          label: "Add Donation",
-          onClick: () => navigate("/restaurant/donate"),
-          icon: (
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-          ),
-        }}
-      />
+  const canCancelSelected =
+    detailData && detailData.status !== "Picked up" && detailData.status !== "Cancelled";
 
-      {/* Filter Tabs */}
-      <div className="mt-6 flex flex-wrap gap-2">
-        {TABS.map((tab) => {
-          const isActive = currentStatus === tab.value;
-          const count = getTabCount(tab.value);
-          return (
-            <button
-              key={tab.value}
-              onClick={() => handleStatusChange(tab.value)}
-              className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
-                isActive
-                  ? "border-primary bg-primary-50 text-primary"
-                  : "border-border bg-white text-text-secondary hover:bg-warm-50 hover:text-dark-gray"
-              }`}
-            >
-              {tab.label}
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                  isActive ? "bg-primary text-white" : "bg-warm-100 text-text-secondary"
+  const getDropdownItems = (item: FoodPost) => [
+    {
+      label: "View Details",
+      icon: (
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+      ),
+      onClick: () => openDrawer(item),
+    },
+    ...(item.status !== "Picked up" && item.status !== "Cancelled"
+      ? [
+          {
+            label: "Cancel Donation",
+            danger: true as const,
+            icon: (
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ),
+            onClick: () => setCancelId(item.id),
+          },
+        ]
+      : []),
+  ];
+
+  return (
+    <div className="flex h-full">
+      {/* Main Content */}
+      <div className="flex-1 min-w-0 transition-all duration-300 p-4 lg:p-8">
+        <PageHeader
+          title="My Donations"
+          subtitle="Track and manage all your food donations."
+          action={{
+            label: "Add Donation",
+            onClick: () => navigate("/restaurant/donate"),
+            icon: (
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            ),
+          }}
+        />
+
+        {/* Filter Tabs */}
+        <div className="mt-6 flex flex-wrap gap-2">
+          {TABS.map((tab) => {
+            const isActive = currentStatus === tab.value;
+            const count = getTabCount(tab.value);
+            return (
+              <button
+                key={tab.value}
+                onClick={() => handleStatusChange(tab.value)}
+                className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "border-primary bg-primary-50 text-primary"
+                    : "border-border bg-white text-text-secondary hover:bg-warm-50 hover:text-dark-gray"
                 }`}
               >
-                {count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+                {tab.label}
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                    isActive ? "bg-primary text-white" : "bg-warm-100 text-text-secondary"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Table */}
-      <div className="mt-6">
-        {isLoading ? (
-          <div className="flex min-h-[300px] items-center justify-center">
-            <LoadingSpinner size="lg" text="Loading donations..." />
-          </div>
-        ) : (
-          <DataTable
-            data={paginatedPosts}
-            keyExtractor={(item) => item.id}
-            emptyState={
-              <EmptyState
-                title="No donations found"
-                description={
-                  currentStatus === "All"
-                    ? "You haven't created any food donations yet."
-                    : `You don't have any ${currentStatus.toLowerCase()} donations.`
-                }
-                action={{
-                  label: "Add Donation",
-                  onClick: () => navigate("/restaurant/donate"),
-                }}
-              />
-            }
-            columns={[
-              {
-                key: "food_item",
-                header: "Food Item",
-                width: "30%",
-                render: (item) => (
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border bg-warm-50">
-                      {item.image_url ? (
-                        <img
-                          src={item.image_url}
-                          alt={item.food_name}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-text-muted">
-                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Table */}
+        <div className="mt-6">
+          {isLoading ? (
+            <div className="flex min-h-[300px] items-center justify-center">
+              <LoadingSpinner size="lg" text="Loading donations..." />
+            </div>
+          ) : (
+            <DataTable
+              data={paginatedPosts}
+              keyExtractor={(item) => item.id}
+              emptyState={
+                <EmptyState
+                  title="No donations found"
+                  description={
+                    currentStatus === "All"
+                      ? "You haven't created any food donations yet."
+                      : `You don't have any ${currentStatus.toLowerCase()} donations.`
+                  }
+                  action={{
+                    label: "Add Donation",
+                    onClick: () => navigate("/restaurant/donate"),
+                  }}
+                />
+              }
+              columns={[
+                {
+                  key: "food_item",
+                  header: "Food Item",
+                  width: "30%",
+                  render: (item) => (
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border bg-warm-50">
+                        {item.image_url ? (
+                          <img
+                            src={item.image_url}
+                            alt={item.food_name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-text-muted">
+                            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-dark-gray">{item.food_name}</p>
+                        <FoodTypeBadge type={item.food_type} size="sm" />
+                      </div>
+                    </div>
+                  ),
+                },
+                {
+                  key: "quantity",
+                  header: "Quantity",
+                  render: (item) => `${item.quantity} Plates`,
+                },
+                {
+                  key: "area",
+                  header: "Area",
+                  render: (item) => item.area,
+                },
+                {
+                  key: "status",
+                  header: "Status",
+                  render: (item) => <StatusBadge status={item.status} size="sm" />,
+                },
+                {
+                  key: "created_at",
+                  header: "Posted On",
+                  render: (item) => (item.created_at ? formatDate(item.created_at) : "—"),
+                },
+                {
+                  key: "safe_until_time",
+                  header: "Expires At",
+                  render: (item) => formatDate(item.safe_until_time),
+                },
+                {
+                  key: "actions",
+                  header: "Actions",
+                  align: "right",
+                  render: (item) => (
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        onClick={() => openDrawer(item)}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary hover:bg-warm-50 hover:text-primary transition-colors"
+                        title="View details"
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      </button>
+                      <DropdownMenu
+                        align="left"
+                        trigger={
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              strokeWidth={1.5}
-                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              strokeWidth={2}
+                              d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
                             />
                           </svg>
-                        </div>
-                      )}
+                        }
+                        items={getDropdownItems(item)}
+                      />
                     </div>
-                    <div>
-                      <p className="font-medium text-dark-gray">{item.food_name}</p>
-                      <FoodTypeBadge type={item.food_type} size="sm" />
-                    </div>
-                  </div>
-                ),
-              },
-              {
-                key: "quantity",
-                header: "Quantity",
-                render: (item) => `${item.quantity} Plates`,
-              },
-              {
-                key: "area",
-                header: "Area",
-                render: (item) => item.area,
-              },
-              {
-                key: "status",
-                header: "Status",
-                render: (item) => <StatusBadge status={item.status} size="sm" />,
-              },
-              {
-                key: "created_at",
-                header: "Posted On",
-                render: (item) => (item.created_at ? formatDate(item.created_at) : "—"),
-              },
-              {
-                key: "safe_until_time",
-                header: "Expires At",
-                render: (item) => formatDate(item.safe_until_time),
-              },
-              {
-                key: "actions",
-                header: "Actions",
-                align: "right",
-                render: (item) => (
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => navigate(`/restaurant/donations/${item.id}`)}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-secondary hover:bg-warm-50 hover:text-primary transition-colors"
-                      title="View details"
-                    >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    </button>
-                    {item.status !== "Picked up" && item.status !== "Cancelled" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setCancelId(item.id)}
-                      >
-                        Cancel
-                      </Button>
-                    )}
-                  </div>
-                ),
-              },
-            ]}
-          />
+                  ),
+                },
+              ]}
+            />
+          )}
+        </div>
+
+        {/* Pagination Footer */}
+        {!isLoading && filteredPosts.length > 0 && (
+          <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <p className="text-sm text-text-secondary">
+              Showing {showingStart} to {showingEnd} of {filteredPosts.length} donations
+            </p>
+            <Pagination currentPage={safePage} totalPages={totalPages} onPageChange={handlePageChange} />
+          </div>
         )}
       </div>
 
-      {/* Pagination Footer */}
-      {!isLoading && filteredPosts.length > 0 && (
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-sm text-text-secondary">
-            Showing {showingStart} to {showingEnd} of {filteredPosts.length} donations
-          </p>
-          <Pagination currentPage={safePage} totalPages={totalPages} onPageChange={handlePageChange} />
-        </div>
-      )}
+      {/* Detail Drawer */}
+      <Drawer
+        isOpen={drawerOpen}
+        onClose={closeDrawer}
+        title="Donation Details"
+        side="left"
+        width="420px"
+      >
+        <FoodDetailPanel
+          food={detailData}
+          loading={detailLoading}
+          onClose={closeDrawer}
+          onCancel={canCancelSelected ? () => setCancelId(selectedId) : undefined}
+        />
+      </Drawer>
 
       <ConfirmDialog
         isOpen={!!cancelId}
