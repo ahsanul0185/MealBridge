@@ -48,6 +48,7 @@ export function AvailableFood() {
         limit: LIMIT,
         area: areaParam || undefined,
         food_type: (foodTypeParam as any) || undefined,
+        search: searchParam || undefined,
       });
 
       // New shape: response.data.data = { items, stats }, response.data.meta = { total, ... }
@@ -74,7 +75,7 @@ export function AvailableFood() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, areaParam, foodTypeParam]);
+  }, [currentPage, areaParam, foodTypeParam, searchParam]);
 
   useEffect(() => {
     fetchFoods();
@@ -84,6 +85,16 @@ export function AvailableFood() {
   useEffect(() => {
     setSearchInput(searchParam);
   }, [searchParam]);
+
+  // Auto-debounce searchInput to update the URL
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== searchParam) {
+        updateParam("search", searchInput);
+      }
+    }, 400); // 400ms debounce
+    return () => clearTimeout(timer);
+  }, [searchInput, searchParam]);
 
   const updateParam = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);

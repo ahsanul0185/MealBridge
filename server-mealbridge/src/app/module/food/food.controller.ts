@@ -20,9 +20,12 @@ const createFood = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAvailableFood = catchAsync(async (req: Request, res: Response) => {
-  const { area, food_type } = req.query as { area?: string; food_type?: string };
+  const { area, food_type, search, quantity, safe_until } = req.query as any;
   const { page, limit, skip } = getPagination(req);
-  const { data, total, totalServings, restaurantsCount } = await foodService.getAvailableFood({ area, food_type }, { skip, limit });
+  const { data, total, totalServings, restaurantsCount } = await foodService.getAvailableFood(
+    { area, food_type, search, quantity, safe_until },
+    { skip, limit }
+  );
   sendResponse(res, {
     statusCode: 200,
     success: true,

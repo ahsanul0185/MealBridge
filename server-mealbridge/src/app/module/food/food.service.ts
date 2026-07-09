@@ -13,7 +13,7 @@ const createFood = async (payload: any, restaurantId: string, imageUrl?: string)
 };
 
 const getAvailableFood = async (
-  filters: { area?: string; food_type?: string },
+  filters: { area?: string; food_type?: string; search?: string; quantity?: number; safe_until?: string },
   pagination: { skip: number; limit: number }
 ) => {
   const query: any = { status: "Available" };
@@ -24,9 +24,17 @@ const getAvailableFood = async (
   if (filters.food_type) {
     query.food_type = filters.food_type;
   }
+  if (filters.search) {
+    query.food_name = { $regex: filters.search, $options: "i" };
+  }
+  if (filters.quantity) {
+    query.quantity = { $gte: Number(filters.quantity) };
+  }
 
-  // Exclude expired items from available listing
-  query.safe_until_time = { $gte: new Date() };
+  // Exclude expired items, or use custom safe_until filter
+  const minSafeTime = filters.safe_until ? new Date(filters.safe_until) : new Date();
+  const now = new Date();
+  query.safe_until_time = { $gte: minSafeTime > now ? minSafeTime : now };
 
   // Base query without filters for global stats (always unfiltered by area/type)
   const globalQuery: any = {

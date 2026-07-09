@@ -3,6 +3,9 @@ import api from "../lib/axios";
 export interface FoodFilters {
   area?: string;
   food_type?: string;
+  search?: string;
+  quantity?: number;
+  safe_until?: string;
   page?: number;
   limit?: number;
 }
