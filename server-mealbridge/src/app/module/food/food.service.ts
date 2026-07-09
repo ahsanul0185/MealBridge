@@ -25,17 +25,43 @@ const getAvailableFood = async (
     query.food_type = filters.food_type;
   }
 
-  // Also exclude expired items from available listing
+  // Exclude expired items from available listing
   query.safe_until_time = { $gte: new Date() };
 
-  const total = await FoodPost.countDocuments(query);
-  const food = await FoodPost.find(query)
-    .populate("restaurant_id", "name email phone area")
-    .sort({ created_at: -1 })
-    .skip(pagination.skip)
-    .limit(pagination.limit);
+  // Base query without filters for global stats (always unfiltered by area/type)
+  const globalQuery: any = {
+    status: "Available",
+    safe_until_time: { $gte: new Date() },
+  };
 
-  return { data: food, total };
+  const [total, food, globalStats] = await Promise.all([
+    FoodPost.countDocuments(query),
+    FoodPost.find(query)
+      .populate("restaurant_id", "name email phone area")
+      .sort({ created_at: -1 })
+      .skip(pagination.skip)
+      .limit(pagination.limit),
+    FoodPost.aggregate([
+      { $match: globalQuery },
+      {
+        $group: {
+          _id: null,
+          totalServings: { $sum: "$quantity" },
+          restaurantIds: { $addToSet: "$restaurant_id" },
+        },
+      },
+      {
+        $project: {
+          totalServings: 1,
+          restaurantsCount: { $size: "$restaurantIds" },
+        },
+      },
+    ]),
+  ]);
+
+  const { totalServings = 0, restaurantsCount = 0 } = globalStats[0] ?? {};
+
+  return { data: food, total, totalServings, restaurantsCount };
 };
 
 const getFoodById = async (id: string) => {
