@@ -1,15 +1,23 @@
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ToastProvider } from "./contexts/ToastContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { LandingPage } from "./pages/LandingPage";
+import { LoginPage } from "./pages/auth/LoginPage";
+import { RegisterPage } from "./pages/auth/RegisterPage";
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-warm-white text-dark-gray">
-        {/* User will add routes and layout here */}
-        <main className="p-4">
-          <h1 className="text-2xl font-bold text-primary">MealBridge</h1>
-          <p>Frontend scaffold ready. Add your routes and components!</p>
-        </main>
-      </div>
+      <ToastProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AuthProvider>
+      </ToastProvider>
     </BrowserRouter>
   );
 }
