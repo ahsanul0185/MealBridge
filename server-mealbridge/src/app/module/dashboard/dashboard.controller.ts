@@ -2,19 +2,16 @@ import { Request, Response } from "express";
 import catchAsync from "../../shared/catchAsync.js";
 import sendResponse from "../../shared/sendResponse.js";
 
+import dashboardService from "./dashboard.service.js";
+
 const getRestaurantDashboard = catchAsync(async (req: Request, res: Response) => {
+  const result = await dashboardService.getRestaurantDashboard(req.user!.userId);
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Restaurant dashboard fetched successfully",
-    data: {
-      totalPosts: 0,
-      availablePosts: 0,
-      claimedPosts: 0,
-      pickedUpPosts: 0,
-      expiredPosts: 0,
-      totalPlates: 0,
-    },
+    data: result,
   });
 });
 
