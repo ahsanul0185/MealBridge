@@ -11,7 +11,7 @@ const startServer = async () => {
     // Start server
     const port = config.port;
     app.listen(port, () => {
-      console.log(`🚀 Server running on port ${port} in ${config.NODE_ENV} mode`);
+      console.log(`Server running on port ${port} in ${config.NODE_ENV} mode`);
     });
   } catch (error) {
     console.error("Failed to start server:", error);
