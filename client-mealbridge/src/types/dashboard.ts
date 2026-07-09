@@ -1,5 +1,5 @@
-import { FoodPost } from "./food";
-import { Claim } from "./claim";
+import type { FoodPost } from "./food";
+import type { Claim } from "./claim";
 
 export interface RestaurantDashboardData {
   total_posts: number;
