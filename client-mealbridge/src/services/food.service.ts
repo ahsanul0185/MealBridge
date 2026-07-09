@@ -22,7 +22,9 @@ export const getMyPosts = (page?: number, limit?: number) =>
   api.get("/food/my-posts", { params: { page, limit } });
 
 export const updateFood = (id: string, data: any) =>
-  api.put(`/food/${id}`, data);
+  api.put(`/food/${id}`, data, {
+    headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+  });
 
 export const cancelFood = (id: string) =>
   api.put(`/food/${id}/cancel`);

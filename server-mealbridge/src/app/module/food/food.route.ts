@@ -38,6 +38,7 @@ router.put(
   "/:id",
   checkAuth,
   restrictTo("restaurant"),
+  upload.single("image"),
   foodController.updateFood
 );
 router.put(

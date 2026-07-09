@@ -57,7 +57,11 @@ const getMyPosts = catchAsync(async (req: Request, res: Response) => {
 
 const updateFood = catchAsync(async (req: Request, res: Response) => {
   const restaurantId = req.user!.userId;
-  const result = await foodService.updateFood(req.params.id, restaurantId, req.body);
+  const imageUrl = req.file
+    ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+    : undefined;
+
+  const result = await foodService.updateFood(req.params.id, restaurantId, req.body, imageUrl);
   sendResponse(res, {
     statusCode: 200,
     success: true,

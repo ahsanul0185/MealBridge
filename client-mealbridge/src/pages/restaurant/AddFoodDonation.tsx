@@ -23,7 +23,7 @@ export function AddFoodDonation() {
   };
 
   return (
-    <div>
+    <div className="p-4 lg:p-8">
       <PageHeader
         title="Add Food Donation"
         subtitle="Fill in the details to donate food."

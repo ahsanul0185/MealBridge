@@ -143,7 +143,7 @@ export function MyDonations() {
       await cancelFood(cancelId);
       toast.success("Donation cancelled successfully");
       setAllPosts((prev) =>
-        prev.map((post) => (post.id === cancelId ? { ...post, status: "Cancelled" as FoodStatus } : post))
+        prev.map((post) => ((post.id || (post as any)._id) === cancelId ? { ...post, status: "Cancelled" as FoodStatus } : post))
       );
       if (selectedId === cancelId && detailData) {
         setDetailData({ ...detailData, status: "Cancelled" });
@@ -177,6 +177,19 @@ export function MyDonations() {
       ),
       onClick: () => openDrawer(item),
     },
+    ...(item.status === "Available"
+      ? [
+          {
+            label: "Edit Donation",
+            icon: (
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            ),
+            onClick: () => navigate(`/restaurant/edit/${item.id || (item as any)._id}`),
+          },
+        ]
+      : []),
     ...(item.status !== "Picked up" && item.status !== "Cancelled"
       ? [
           {
@@ -187,7 +200,7 @@ export function MyDonations() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ),
-            onClick: () => setCancelId(item.id),
+            onClick: () => setCancelId(item.id || (item as any)._id),
           },
         ]
       : []),
@@ -248,7 +261,7 @@ export function MyDonations() {
           ) : (
             <DataTable
               data={paginatedPosts}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.id || (item as any)._id}
               emptyState={
                 <EmptyState
                   title="No donations found"
@@ -349,7 +362,7 @@ export function MyDonations() {
                         </svg>
                       </button>
                       <DropdownMenu
-                        align="left"
+                        align="right"
                         trigger={
                           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path

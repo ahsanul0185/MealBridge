@@ -8,6 +8,7 @@ import { LoginPage } from "./pages/auth/LoginPage";
 import { RegisterPage } from "./pages/auth/RegisterPage";
 import { RestaurantDashboard } from "./pages/restaurant/RestaurantDashboard";
 import { AddFoodDonation } from "./pages/restaurant/AddFoodDonation";
+import { EditFoodDonation } from "./pages/restaurant/EditFoodDonation";
 import { MyDonations } from "./pages/restaurant/MyDonations";
 import { NgoDashboard } from "./pages/ngo/NgoDashboard";
 import { AvailableFood } from "./pages/ngo/AvailableFood";
@@ -39,6 +40,7 @@ function AppContent() {
         >
           <Route path="dashboard" element={<RestaurantDashboard />} />
           <Route path="donate" element={<AddFoodDonation />} />
+          <Route path="edit/:id" element={<EditFoodDonation />} />
           <Route path="donations" element={<MyDonations />} />
         </Route>
 

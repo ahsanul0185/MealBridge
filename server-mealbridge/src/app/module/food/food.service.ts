@@ -70,7 +70,7 @@ const getMyPosts = async (
   return { data: posts, total };
 };
 
-const updateFood = async (id: string, restaurantId: string, payload: any) => {
+const updateFood = async (id: string, restaurantId: string, payload: any, imageUrl?: string) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new AppError(400, "Invalid food post ID");
   }
@@ -83,6 +83,10 @@ const updateFood = async (id: string, restaurantId: string, payload: any) => {
   // Only allow update if not picked up yet
   if (food.status === "Picked up" || food.status === "Cancelled") {
     throw new AppError(400, "Cannot update a food post that is already picked up or cancelled");
+  }
+
+  if (imageUrl) {
+    payload.image_url = imageUrl;
   }
 
   Object.assign(food, payload);

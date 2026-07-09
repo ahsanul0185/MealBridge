@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from "react";
-import type { CreateFoodData } from "../../types/food";
+import { useState, useEffect, type FormEvent } from "react";
+import type { CreateFoodData, FoodPost } from "../../types/food";
 import { Button } from "../common/Button";
 import { Input } from "../common/Input";
 import { Select } from "../common/Select";
@@ -10,15 +10,35 @@ interface FoodFormProps {
   onSubmit: (data: FormData) => void;
   isSubmitting?: boolean;
   onCancel?: () => void;
+  initialData?: FoodPost | any;
+  submitText?: string;
 }
 
-export function FoodForm({ onSubmit, isSubmitting = false, onCancel }: FoodFormProps) {
+export function FoodForm({ onSubmit, isSubmitting = false, onCancel, initialData, submitText = "Publish Donation" }: FoodFormProps) {
   const [formData, setFormData] = useState<Partial<CreateFoodData>>({
     food_type: "Veg",
   });
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        food_name: initialData.food_name || "",
+        food_type: initialData.food_type || "Veg",
+        quantity: initialData.quantity || "",
+        pickup_address: initialData.pickup_address || "",
+        area: initialData.area || "",
+        prepared_time: initialData.prepared_time ? new Date(initialData.prepared_time).toISOString().slice(0, 16) : "",
+        safe_until_time: initialData.safe_until_time ? new Date(initialData.safe_until_time).toISOString().slice(0, 16) : "",
+        note: initialData.note || "",
+      });
+      if (initialData.image_url) {
+        setImagePreview(initialData.image_url);
+      }
+    }
+  }, [initialData]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -201,7 +221,7 @@ export function FoodForm({ onSubmit, isSubmitting = false, onCancel }: FoodFormP
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
-            Publish Donation
+            {submitText}
           </Button>
           {onCancel && (
             <Button type="button" variant="outline" onClick={onCancel}>
