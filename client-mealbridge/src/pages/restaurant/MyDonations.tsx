@@ -194,7 +194,7 @@ export function MyDonations() {
   ];
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full flex-1 min-w-0">
       {/* Main Content */}
       <div className="flex-1 min-w-0 transition-all duration-300 p-4 lg:p-8">
         <PageHeader

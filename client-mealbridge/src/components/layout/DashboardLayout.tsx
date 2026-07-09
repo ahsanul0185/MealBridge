@@ -85,9 +85,9 @@ export function DashboardLayout() {
       )}
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col lg:pl-64">
+      <div className="flex flex-1 flex-col min-w-0 lg:pl-64">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-white px-4 lg:px-8">
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-4 lg:px-8">
           {/* Left: Mobile hamburger + Organization name */}
           <div className="flex items-center gap-3">
             {/* Mobile hamburger */}
@@ -106,7 +106,7 @@ export function DashboardLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1">
+        <main className="flex flex-1 flex-col min-w-0">
           <Outlet />
         </main>
       </div>
