@@ -1,31 +1,31 @@
 import { Link } from "react-router-dom";
-import { Leaf, Store, Users, Globe, ArrowRight, ShieldCheck } from "lucide-react";
+import { Leaf, Store, Users, Globe, ShieldCheck } from "lucide-react";
 import { GoArrowRight } from "react-icons/go";
 
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+      <main className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-8 lg:gap-12 lg:grid-cols-2">
           {/* Left Column */}
-          <div className="flex flex-col items-start space-y-8">
+          <div className="flex flex-col items-center text-center sm:items-start sm:text-left space-y-6 sm:space-y-8">
             <div className="inline-flex items-center gap-2 rounded-full bg-[#E5F5E9] px-4 py-2 text-sm font-medium text-[#1E773D]">
               <Leaf size={16} className="shrink-0" />
               Connecting extra food with those who need it
             </div>
             
-            <h1 className="text-[3.5rem] font-bold leading-[1.1] text-dark-gray sm:text-6xl tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] text-dark-gray tracking-tight">
               Save extra food.<br />
               <span className="text-[#1E773D]">Feed more people.</span>
             </h1>
             
-            <p className="max-w-lg text-[1.1rem] leading-relaxed text-text-secondary">
+            <p className="max-w-lg text-base sm:text-[1.1rem] leading-relaxed text-text-secondary">
               MealBridge helps restaurants reduce food waste by connecting surplus meals with NGOs that serve communities. Together, we can build a better, more sustainable world.
             </p>
             
             <div className="flex flex-col gap-4 sm:flex-row w-full sm:w-auto items-center">
-              <Link to="/register?role=restaurant" className="flex items-center gap-4 rounded-2xl bg-[#1E773D] px-6 py-3 text-white transition-all hover:bg-[#166534] hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#1E773D]/20">
+              <Link to="/register?role=restaurant" className="flex w-full sm:w-auto items-center justify-center sm:justify-start gap-4 rounded-2xl bg-[#1E773D] px-6 py-3 text-white transition-all hover:bg-[#166534] hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#1E773D]/20">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center">
                   <Store size={26} strokeWidth={1.5} />
                 </div>
@@ -35,7 +35,7 @@ export function LandingPage() {
                 </div>
               </Link>
               
-              <Link to="/register?role=ngo" className="flex items-center gap-4 rounded-2xl border border-[#D5D9D7] bg-white px-6 py-3 text-dark-gray transition-all hover:border-[#1E773D] hover:bg-[#F9FCFA] hover:shadow-md focus:outline-none focus:ring-4 focus:ring-[#1E773D]/20">
+              <Link to="/register?role=ngo" className="flex w-full sm:w-auto items-center justify-center sm:justify-start gap-4 rounded-2xl border border-[#D5D9D7] bg-white px-6 py-3 text-dark-gray transition-all hover:border-[#1E773D] hover:bg-[#F9FCFA] hover:shadow-md focus:outline-none focus:ring-4 focus:ring-[#1E773D]/20">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center">
                   <Users size={26} strokeWidth={1.5} className="text-[#1E773D]" />
                 </div>
@@ -53,9 +53,9 @@ export function LandingPage() {
           </div>
 
           {/* Right Column - Cards */}
-          <div className="relative mt-16 flex gap-6 h-120 w-full items-center justify-center lg:mt-0 xl:justify-end xl:-right-10">
+          <div className="relative mt-10 sm:mt-16 flex flex-col sm:flex-row gap-6 h-auto sm:h-120 w-full items-center justify-center lg:mt-0 xl:justify-end xl:-right-10">
             {/* Card 1 */}
-            <div className="relative w-65 rounded-2xl shadow-lg">
+            <div className="relative w-full max-w-[260px] sm:w-65 rounded-2xl shadow-lg">
               <div className="relative h-48 w-full overflow-hidden rounded-t-2xl">
                 <img src="/src/assets/rice.png" alt="Delicious Rice Dish" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
               </div>
@@ -78,7 +78,7 @@ export function LandingPage() {
             </div>
 
             {/* Card 2 */}
-            <div className="relative w-65 rounded-2xl shadow-lg top-7">
+            <div className="relative w-full max-w-[260px] sm:w-65 rounded-2xl shadow-lg sm:top-7">
               <div className="relative h-48 w-full overflow-hidden rounded-t-2xl">
                 <img src="/src/assets/curry.png" alt="Rich Curry Dish" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
               </div>
@@ -98,8 +98,8 @@ export function LandingPage() {
         </div>
 
         {/* Feature Bottom Section */}
-        <div className="mt-32 rounded-3xl bg-[#F9FCFA] py-12 px-6 shadow-sm border border-[#E5F5E9]/50 sm:px-12">
-          <div className="grid gap-10 md:grid-cols-3 md:divide-x md:divide-border/40">
+        <div className="mt-16 sm:mt-24 lg:mt-32 rounded-3xl bg-[#F9FCFA] py-10 sm:py-12 px-6 shadow-sm border border-[#E5F5E9]/50 sm:px-12">
+          <div className="grid gap-8 md:gap-10 md:grid-cols-3 md:divide-x md:divide-border/40">
             {/* Feature 1 */}
             <div className="flex flex-col sm:flex-row items-center gap-5 sm:items-start text-center sm:text-left md:px-6">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#E5F5E9] text-[#1E773D]">
