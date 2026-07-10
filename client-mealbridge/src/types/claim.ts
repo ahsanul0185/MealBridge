@@ -21,6 +21,7 @@ export interface FoodPostInfo {
   prepared_time: string;
   safe_until_time: string;
   image_url?: string;
+  note?: string;
   status: string;
   restaurant_id: RestaurantInfo;
 }

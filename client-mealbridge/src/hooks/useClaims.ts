@@ -20,6 +20,64 @@ export interface ClaimFilters {
   to?: string;
 }
 
+export function useClaim(id: string | undefined) {
+  const [claim, setClaim] = useState<Claim | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchClaim = useCallback(async () => {
+    if (!id) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await claimService.getClaimById(id);
+      setClaim(response.data?.data ?? null);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to load claim details");
+      setClaim(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchClaim();
+  }, [fetchClaim]);
+
+  const updateStatus = async (pickup_status: "On the way" | "Picked up") => {
+    if (!id) return;
+    try {
+      await claimService.updatePickupStatus(id, pickup_status);
+      toast.success(`Pickup status updated to ${pickup_status}`);
+      await fetchClaim();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to update pickup status");
+      throw err;
+    }
+  };
+
+  const markPickedUp = async () => {
+    if (!id) return;
+    try {
+      await claimService.markPickedUp(id);
+      toast.success("Food marked as picked up");
+      await fetchClaim();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to mark as picked up");
+      throw err;
+    }
+  };
+
+  return {
+    claim,
+    isLoading,
+    refetch: fetchClaim,
+    updateStatus,
+    markPickedUp,
+  };
+}
+
 export function useClaims(filters: ClaimFilters = {}) {
   const { page = 1, limit = 10 } = filters;
 

@@ -8,6 +8,7 @@ import { claimValidation } from "./claim.validation.js";
 const router = Router();
 
 router.get("/my-claims", checkAuth, restrictTo("ngo"), claimController.getMyClaims);
+router.get("/:id", checkAuth, restrictTo("ngo"), claimController.getClaimById);
 router.put(
   "/:id/status",
   checkAuth,

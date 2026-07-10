@@ -57,7 +57,7 @@ function AppContent() {
           <Route path="food" element={<AvailableFood />} />
           <Route path="food/:id" element={<FoodDetailPage />} />
           <Route path="claims" element={<MyClaims />} />
-          <Route path="pickups" element={<PickupStatus />} />
+          <Route path="pickups/:id" element={<PickupStatus />} />
         </Route>
 
         {/* Catch all - redirect to home */}

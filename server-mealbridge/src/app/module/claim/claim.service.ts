@@ -106,6 +106,27 @@ const buildFilteredClaimsPipeline = (
   return pipeline;
 };
 
+const getClaimById = async (claimId: string, ngoId: string) => {
+  if (!mongoose.Types.ObjectId.isValid(claimId)) {
+    throw new AppError(400, "Invalid claim ID");
+  }
+
+  const claim = await Claim.findOne({ _id: claimId, ngo_id: ngoId })
+    .populate({
+      path: "food_post_id",
+      populate: {
+        path: "restaurant_id",
+        select: "name email phone area address",
+      },
+    });
+
+  if (!claim) {
+    throw new AppError(404, "Claim not found or you do not have permission");
+  }
+
+  return claim;
+};
+
 const getMyClaims = async (
   ngoId: string,
   pagination: { skip: number; limit: number },
@@ -208,6 +229,7 @@ const markPickedUp = async (claimId: string, ngoId: string) => {
 };
 
 const claimService = {
+  getClaimById,
   getMyClaims,
   updateStatus,
   markPickedUp,

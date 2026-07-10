@@ -174,10 +174,9 @@ export function MyClaims() {
   };
 
   const handleViewDetails = (claim: Claim) => {
-    const food = getFoodPost(claim);
-    const foodId = food?.id || food?._id;
-    if (foodId) {
-      navigate(`/ngo/food/${foodId}`);
+    const claimId = claim._id || claim.id;
+    if (claimId) {
+      navigate(`/ngo/pickups/${claimId}`);
     }
   };
 

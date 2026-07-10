@@ -4,6 +4,17 @@ import sendResponse from "../../shared/sendResponse.js";
 import claimService from "./claim.service.js";
 import { getPagination, getPaginationMeta } from "../../utils/paginate.js";
 
+const getClaimById = catchAsync(async (req: Request, res: Response) => {
+  const ngoId = req.user!.userId;
+  const result = await claimService.getClaimById(req.params.id, ngoId);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Claim fetched successfully",
+    data: result,
+  });
+});
+
 const getMyClaims = catchAsync(async (req: Request, res: Response) => {
   const ngoId = req.user!.userId;
   const { page, limit, skip } = getPagination(req);
@@ -53,6 +64,7 @@ const markPickedUp = catchAsync(async (req: Request, res: Response) => {
 });
 
 const claimController = {
+  getClaimById,
   getMyClaims,
   updateStatus,
   markPickedUp,

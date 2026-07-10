@@ -13,6 +13,8 @@ export interface GetMyClaimsParams {
 export const getMyClaims = (params: GetMyClaimsParams = {}) =>
   api.get("/claims/my-claims", { params });
 
+export const getClaimById = (id: string) => api.get(`/claims/${id}`);
+
 export const updatePickupStatus = (
   id: string,
   pickup_status: "On the way" | "Picked up"
