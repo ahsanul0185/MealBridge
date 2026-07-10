@@ -16,17 +16,13 @@ const getRestaurantDashboard = catchAsync(async (req: Request, res: Response) =>
 });
 
 const getNgoDashboard = catchAsync(async (req: Request, res: Response) => {
+  const result = await dashboardService.getNgoDashboard(req.user!.userId);
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "NGO dashboard fetched successfully",
-    data: {
-      availableFoodCount: 0,
-      claimedPickups: 0,
-      onTheWayPickups: 0,
-      completedPickups: 0,
-      totalPlatesCollected: 0,
-    },
+    data: result,
   });
 });
 

@@ -11,11 +11,14 @@ export interface RestaurantDashboardData {
   recent_posts: FoodPost[];
 }
 
+export interface NgoDashboardStats {
+  availableDonationsNearby: number;
+  activeClaims: number;
+  pickedUpToday: number;
+  totalPickupsThisMonth: number;
+}
+
 export interface NgoDashboardData {
-  available_count: number;
-  claimed_pickups: number;
-  on_the_way: number;
-  completed_pickups: number;
-  total_plates: number;
-  recent_claims: Claim[];
+  stats: NgoDashboardStats;
+  recentClaims: Claim[];
 }

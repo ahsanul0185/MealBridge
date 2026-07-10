@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import FoodPost from "../../models/FoodPost.js";
+import Claim from "../../models/Claim.js";
 
 const getRestaurantDashboard = async (restaurantId: string) => {
   const currentObject = new mongoose.Types.ObjectId(restaurantId);
@@ -50,8 +51,68 @@ const getRestaurantDashboard = async (restaurantId: string) => {
   };
 };
 
+const getNgoDashboard = async (ngoId: string) => {
+  const objectNgoId = new mongoose.Types.ObjectId(ngoId);
+  const now = new Date();
+
+  // Start of today
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+
+  // Start of current month
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const [
+    availableDonationsNearby,
+    activeClaims,
+    pickedUpToday,
+    totalPickupsThisMonth,
+    recentClaims,
+  ] = await Promise.all([
+    FoodPost.countDocuments({
+      status: "Available",
+      safe_until_time: { $gte: now },
+    }),
+    Claim.countDocuments({
+      ngo_id: objectNgoId,
+      pickup_status: { $in: ["Claimed", "On the way"] },
+    }),
+    Claim.countDocuments({
+      ngo_id: objectNgoId,
+      pickup_status: "Picked up",
+      picked_up_time: { $gte: startOfToday },
+    }),
+    Claim.countDocuments({
+      ngo_id: objectNgoId,
+      pickup_status: "Picked up",
+      picked_up_time: { $gte: startOfMonth },
+    }),
+    Claim.find({ ngo_id: objectNgoId })
+      .populate({
+        path: "food_post_id",
+        populate: {
+          path: "restaurant_id",
+          select: "name email phone area address",
+        },
+      })
+      .sort({ created_at: -1 })
+      .limit(3),
+  ]);
+
+  return {
+    stats: {
+      availableDonationsNearby,
+      activeClaims,
+      pickedUpToday,
+      totalPickupsThisMonth,
+    },
+    recentClaims,
+  };
+};
+
 const dashboardService = {
   getRestaurantDashboard,
+  getNgoDashboard,
 };
 
 export default dashboardService;
