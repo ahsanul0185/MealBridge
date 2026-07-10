@@ -7,13 +7,25 @@ import { getPagination, getPaginationMeta } from "../../utils/paginate.js";
 const getMyClaims = catchAsync(async (req: Request, res: Response) => {
   const ngoId = req.user!.userId;
   const { page, limit, skip } = getPagination(req);
-  const { data, total } = await claimService.getMyClaims(ngoId, { skip, limit });
+  const { status, search, donor, from, to } = req.query as Record<string, string | undefined>;
+
+  const { data, total, stats } = await claimService.getMyClaims(ngoId, { skip, limit }, {
+    status,
+    search,
+    donor,
+    from,
+    to,
+  });
+
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "My claims fetched successfully",
     meta: getPaginationMeta({ page, limit, total }),
-    data,
+    data: {
+      items: data,
+      stats,
+    },
   });
 });
 

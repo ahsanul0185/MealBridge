@@ -7,6 +7,7 @@ interface SelectOption {
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
+  labelClassName?: string;
   error?: string;
   helperText?: string;
   options: SelectOption[];
@@ -19,6 +20,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   (
     {
       label,
+      labelClassName,
       error,
       helperText,
       options,
@@ -38,7 +40,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={`${widthClass} ${className}`}>
         {label && (
-          <label className="mb-1.5 block text-sm font-medium text-dark-gray">
+          <label className={`mb-1.5 block ${labelClassName || "text-sm font-medium text-dark-gray"}`}>
             {label}
             {props.required && <span className="ml-0.5 text-red-500">*</span>}
           </label>
