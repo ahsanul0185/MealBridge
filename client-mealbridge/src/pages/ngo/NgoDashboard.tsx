@@ -75,6 +75,7 @@ export function NgoDashboard() {
       value: stats?.availableDonationsNearby ?? 0,
       sublabel: "Donations near you",
       iconBg: "bg-green-100 text-green-700",
+      to: "/ngo/food",
       icon: (
         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -87,6 +88,7 @@ export function NgoDashboard() {
       value: stats?.activeClaims ?? 0,
       sublabel: "Total claims made",
       iconBg: "bg-blue-100 text-blue-700",
+      to: "/ngo/claims?status=Claimed",
       icon: (
         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -98,6 +100,7 @@ export function NgoDashboard() {
       value: stats?.pickedUpToday ?? 0,
       sublabel: "Successful pickups",
       iconBg: "bg-yellow-100 text-yellow-700",
+      to: "/ngo/claims?status=Picked up",
       icon: (
         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
@@ -109,6 +112,7 @@ export function NgoDashboard() {
       value: stats?.totalPickupsThisMonth ?? 0,
       sublabel: "This month",
       iconBg: "bg-green-100 text-green-700",
+      to: "/ngo/claims?status=Picked up",
       icon: (
         <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -158,6 +162,7 @@ export function NgoDashboard() {
             label={card.label}
             value={card.value}
             sublabel={card.sublabel}
+            onClick={() => navigate(card.to)}
           />
         ))}
       </div>
