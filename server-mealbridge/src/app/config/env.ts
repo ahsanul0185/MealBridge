@@ -10,5 +10,8 @@ export default {
   database_url: process.env.MONGO_URI || "mongodb://localhost:27017/mealbridge",
   jwt_secret: process.env.JWT_SECRET || "defaultsecret",
   jwt_expires_in: process.env.JWT_EXPIRES_IN || "7d",
-  upload_folder: process.env.UPLOAD_FOLDER || "uploads",
+  upload_folder:
+    process.env.VERCEL === "1"
+      ? "/tmp/mealbridge-uploads"
+      : process.env.UPLOAD_FOLDER || "uploads",
 };

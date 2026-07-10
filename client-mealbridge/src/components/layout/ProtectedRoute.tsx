@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getProfile } from "../../services/auth.service";
 import type { User } from "../../services/auth.service";
@@ -12,7 +12,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ allowedRole, children }: ProtectedRouteProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
+
 
   useEffect(() => {
     getProfile()

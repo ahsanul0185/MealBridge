@@ -5,12 +5,19 @@ import env from "./env.js";
 
 const uploadDir = env.upload_folder;
 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+const ensureUploadDir = () => {
+  if (!fs.existsSync(uploadDir)) {
+    try {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    } catch (error) {
+      console.error(`Failed to create upload directory (${uploadDir}):`, error);
+    }
+  }
+};
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
+    ensureUploadDir();
     cb(null, uploadDir);
   },
   filename: (_req, file, cb) => {

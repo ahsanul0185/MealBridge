@@ -2,7 +2,12 @@ import type { FoodPost } from "../../types/food";
 
 interface FoodCardProps {
   food: FoodPost;
-  onViewDetails: (food: FoodPost) => void;
+  showRestaurant?: boolean;
+  showActions?: boolean;
+  actionLabel?: string;
+  onAction?: (food: FoodPost) => void;
+  onViewDetails?: (food: FoodPost) => void;
+  variant?: "grid" | "list";
 }
 
 const formatDateFriendly = (dateStr: string) => {
@@ -32,7 +37,15 @@ export const getRestaurantName = (food: FoodPost): string => {
   return "Restaurant";
 };
 
-export function FoodCard({ food, onViewDetails }: FoodCardProps) {
+export function FoodCard({
+  food,
+  showRestaurant = true,
+  showActions = true,
+  actionLabel = "View Details",
+  onAction,
+  onViewDetails,
+  variant = "grid",
+}: FoodCardProps) {
   return (
     <div className="flex flex-col rounded-[20px] border border-gray-100 bg-white p-3 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-shadow">
       <div className="flex gap-4">
@@ -63,12 +76,14 @@ export function FoodCard({ food, onViewDetails }: FoodCardProps) {
             {food.food_name}
           </h3>
           
-          <div className="mt-1.5 flex items-center gap-1.5 text-[13px] text-gray-500">
-            <svg className="h-4 w-4 shrink-0 text-[#FF5A25]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72l1.06-4.582A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72" />
-            </svg>
-            <span className="truncate">{getRestaurantName(food)}</span>
-          </div>
+          {showRestaurant && (
+            <div className="mt-1.5 flex items-center gap-1.5 text-[13px] text-gray-500">
+              <svg className="h-4 w-4 shrink-0 text-[#FF5A25]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72l1.06-4.582A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72" />
+              </svg>
+              <span className="truncate">{getRestaurantName(food)}</span>
+            </div>
+          )}
 
           <div className="mt-4 flex flex-col gap-3">
             <div>
@@ -91,12 +106,17 @@ export function FoodCard({ food, onViewDetails }: FoodCardProps) {
         </div>
       </div>
 
-      <button
-        onClick={() => onViewDetails(food)}
-        className="mt-4 w-full rounded-[10px] border border-[#1B7A3E] py-2.5 text-[14px] font-medium text-[#1B7A3E] transition-colors hover:bg-[#E8F3EC]"
-      >
-        View Details
-      </button>
+      {showActions && (onAction || onViewDetails) && (
+        <button
+          onClick={() => {
+            if (onAction) onAction(food);
+            else if (onViewDetails) onViewDetails(food);
+          }}
+          className={`w-full rounded-[10px] border border-[#1B7A3E] py-2.5 text-[14px] font-medium text-[#1B7A3E] transition-colors hover:bg-[#E8F3EC] ${variant === "list" ? "mt-3" : "mt-4"}`}
+        >
+          {actionLabel}
+        </button>
+      )}
     </div>
   );
 }

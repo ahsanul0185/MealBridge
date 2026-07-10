@@ -7,7 +7,7 @@ import { UserDropdown } from "./UserDropdown";
 export function Header() {
   const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+
 
   const isLoginPage = location.pathname === "/login";
   const isRegisterPage = location.pathname === "/register";
@@ -15,7 +15,6 @@ export function Header() {
 
   useEffect(() => {
     if (isLoginPage || isRegisterPage) {
-      setIsLoading(false);
       return;
     }
 
@@ -25,8 +24,7 @@ export function Header() {
       })
       .catch(() => {
         setUser(null);
-      })
-      .finally(() => setIsLoading(false));
+      });
   }, [isLoginPage, isRegisterPage, location.pathname]);
 
   return (

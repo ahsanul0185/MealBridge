@@ -2,7 +2,7 @@ import { StatusBadge } from "../common/Badge";
 import { Button } from "../common/Button";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import { formatDate } from "../../utils/helpers";
-import type { FoodPost, FoodStatus } from "../../types/food";
+import type { FoodPost } from "../../types/food";
 
 interface PopulatedRestaurant {
   name: string;
