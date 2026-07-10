@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { register } from "../../services/auth.service";
 import { Button } from "../../components/common/Button";
 import toast from "react-hot-toast";
@@ -17,8 +17,16 @@ interface FormErrors {
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [role, setRole] = useState<"restaurant" | "ngo">("restaurant");
+
+  useEffect(() => {
+    const roleParam = searchParams.get("role");
+    if (roleParam === "restaurant" || roleParam === "ngo") {
+      setRole(roleParam);
+    }
+  }, [searchParams]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
