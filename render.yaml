@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: mealbridge-backend
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: server-mealbridge
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CLIENT_URL
+        value: https://mealbridge.onrender.com
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: UPLOAD_FOLDER
+        value: uploads

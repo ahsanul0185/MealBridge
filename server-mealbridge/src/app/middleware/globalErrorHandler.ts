@@ -1,5 +1,4 @@
 import { ErrorRequestHandler, Request, Response, NextFunction } from "express";
-import AppError from "../errorHelpers/AppError.js";
 
 const globalErrorHandler: ErrorRequestHandler = (
   err: any,
