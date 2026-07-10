@@ -8,8 +8,43 @@ import env from "./app/config/env.js";
 
 const app: Application = express();
 
-// Middlewares
-app.use(cors({ origin: ["http://localhost:5173", env.client_url], credentials: true }));
+// CORS configuration
+const allowedOrigins = Array.from(
+  new Set([
+    "https://meal-bridge-frontend-pi.vercel.app",
+    env.client_url.replace(/\/$/, ""),
+    ...env.allowed_origins,
+  ])
+).filter(Boolean);
+
+if (env.NODE_ENV === "development") {
+  console.log("Allowed CORS origins:", allowedOrigins);
+}
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      const normalizedOrigin = origin.replace(/\/$/, "");
+
+      if (
+        allowedOrigins.includes(normalizedOrigin) ||
+        (env.NODE_ENV === "development" && normalizedOrigin.startsWith("http://localhost"))
+      ) {
+        return callback(null, true);
+      }
+
+      console.warn(`CORS blocked origin: ${origin}`);
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

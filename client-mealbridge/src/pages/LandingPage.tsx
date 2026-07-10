@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Leaf, Store, Users, Globe, ShieldCheck } from "lucide-react";
 import { GoArrowRight } from "react-icons/go";
+import riceImage from "../assets/rice.png";
+import curryImage from "../assets/curry.png";
 
 export function LandingPage() {
   return (
@@ -57,7 +59,7 @@ export function LandingPage() {
             {/* Card 1 */}
             <div className="relative w-full max-w-[260px] sm:w-65 rounded-2xl shadow-lg">
               <div className="relative h-48 w-full overflow-hidden rounded-t-2xl">
-                <img src="/src/assets/rice.png" alt="Delicious Rice Dish" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                <img src={riceImage} alt="Delicious Rice Dish" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
               </div>
 
               <div className="relative bg-white p-4 pt-12 rounded-2xl -mt-5">
@@ -80,7 +82,7 @@ export function LandingPage() {
             {/* Card 2 */}
             <div className="relative w-full max-w-[260px] sm:w-65 rounded-2xl shadow-lg sm:top-7">
               <div className="relative h-48 w-full overflow-hidden rounded-t-2xl">
-                <img src="/src/assets/curry.png" alt="Rich Curry Dish" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                <img src={curryImage} alt="Rich Curry Dish" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
               </div>
 
               <div className="relative bg-white p-4 pt-12 rounded-2xl -mt-5">
