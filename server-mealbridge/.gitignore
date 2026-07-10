@@ -18,6 +18,7 @@ pnpm-debug.log*
 # Build and distribution directories
 dist/
 build/
+.vercel
 
 # Testing and coverage
 coverage/
