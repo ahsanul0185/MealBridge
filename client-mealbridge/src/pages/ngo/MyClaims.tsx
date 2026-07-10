@@ -31,9 +31,15 @@ function getRestaurant(claim: Claim): RestaurantInfo | null {
   return food?.restaurant_id ?? null;
 }
 
+function getClaimId(claim: Claim): string {
+  const rawId = claim._id ?? claim.id;
+  return rawId ? String(rawId) : "";
+}
+
 function formatClaimId(claim: Claim) {
-  const id = claim._id || claim.id || String(claim.food_post_id);
-  const suffix = id.replace(/\D/g, "").slice(-6).padStart(6, "0");
+  const id = getClaimId(claim);
+  if (!id) return "MB-CLM-000000";
+  const suffix = id.slice(-6).toUpperCase();
   return `MB-CLM-${suffix}`;
 }
 
@@ -174,7 +180,7 @@ export function MyClaims() {
   };
 
   const handleViewDetails = (claim: Claim) => {
-    const claimId = claim._id || claim.id;
+    const claimId = getClaimId(claim);
     if (claimId) {
       navigate(`/ngo/pickups/${claimId}`);
     }
@@ -374,7 +380,7 @@ export function MyClaims() {
           <>
             <DataTable
               data={claims}
-              keyExtractor={(claim) => claim._id || claim.id || String(claim.food_post_id)}
+              keyExtractor={(claim) => getClaimId(claim) || String(claim.food_post_id)}
               rowClassName="align-middle"
               columns={[
                 {

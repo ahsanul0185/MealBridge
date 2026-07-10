@@ -186,7 +186,7 @@ export function NgoDashboard() {
           <>
             <DataTable
               data={recentClaims}
-              keyExtractor={(claim) => claim._id || claim.id || String(claim.food_post_id)}
+              keyExtractor={(claim) => (claim._id ? String(claim._id) : claim.id ? String(claim.id) : String(claim.food_post_id))}
               rowClassName="align-middle"
               columns={[
                 {
