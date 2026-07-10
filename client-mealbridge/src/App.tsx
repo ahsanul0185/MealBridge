@@ -3,6 +3,7 @@ import { ToastProvider } from "./contexts/ToastProvider";
 import { Header } from "./components/layout/Header";
 import { DashboardLayout } from "./components/layout/DashboardLayout";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
+import { PublicRoute } from "./components/layout/PublicRoute";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { RegisterPage } from "./pages/auth/RegisterPage";
@@ -26,8 +27,8 @@ function AppContent() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
         {/* Restaurant Routes - nested under DashboardLayout */}
         <Route
