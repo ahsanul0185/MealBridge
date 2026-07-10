@@ -79,34 +79,34 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
   const { email } = payload;
 
   const user = await User.findOne({ email });
-
-  if (user) {
-    const resetToken = user.createPasswordResetToken();
-    await user.save({ validateBeforeSave: false });
-
-    const resetUrl = `${config.client_url}/reset-password?token=${resetToken}`;
-
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #333;">Reset your MealBridge password</h2>
-        <p>You requested a password reset. Click the button below to set a new password. This link expires in 10 minutes.</p>
-        <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #22c55e; color: #fff; text-decoration: none; border-radius: 6px; margin: 16px 0;">Reset Password</a>
-        <p>If the button doesn't work, copy and paste this link into your browser:</p>
-        <p><a href="${resetUrl}">${resetUrl}</a></p>
-        <p>If you didn't request this, please ignore this email.</p>
-      </div>
-    `;
-
-    await sendEmail({
-      to: user.email,
-      subject: "MealBridge Password Reset",
-      html,
-    });
+  if (!user) {
+    throw new AppError(404, "No account found with this email");
   }
 
-  // Always return a generic message to prevent email enumeration.
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  const resetUrl = `${config.client_url}/reset-password?token=${resetToken}`;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #333;">Reset your MealBridge password</h2>
+      <p>You requested a password reset. Click the button below to set a new password. This link expires in 10 minutes.</p>
+      <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #22c55e; color: #fff; text-decoration: none; border-radius: 6px; margin: 16px 0;">Reset Password</a>
+      <p>If the button doesn't work, copy and paste this link into your browser:</p>
+      <p><a href="${resetUrl}">${resetUrl}</a></p>
+      <p>If you didn't request this, please ignore this email.</p>
+    </div>
+  `;
+
+  await sendEmail({
+    to: user.email,
+    subject: "MealBridge Password Reset",
+    html,
+  });
+
   return {
-    message: "If an account with that email exists, a reset link has been sent.",
+    message: "Reset link sent to your email.",
   };
 };
 

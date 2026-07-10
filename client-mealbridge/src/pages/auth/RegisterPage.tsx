@@ -27,6 +27,7 @@ export function RegisterPage() {
       setRole(roleParam);
     }
   }, [searchParams]);
+  const [fullName, setFullName] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -162,8 +163,25 @@ export function RegisterPage() {
                 </div>
               </div>
 
-              {/* Name & Email */}
+              {/* Full Name & Organization Name */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-dark-gray">Full Name</label>
+                  <div className="relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted">
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="focus-ring block w-full rounded-lg border border-border bg-white py-2.5 pl-10 pr-3 text-sm text-dark-gray placeholder:text-text-muted focus:border-primary"
+                    />
+                  </div>
+                </div>
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-dark-gray">Organization name</label>
                   <div className="relative">
@@ -184,6 +202,10 @@ export function RegisterPage() {
                   </div>
                   {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
                 </div>
+              </div>
+
+              {/* Email & Phone */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-dark-gray">Email address</label>
                   <div className="relative">
@@ -204,10 +226,6 @@ export function RegisterPage() {
                   </div>
                   {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
                 </div>
-              </div>
-
-              {/* Phone & Area */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-dark-gray">Phone number</label>
                   <div className="relative">
@@ -228,6 +246,10 @@ export function RegisterPage() {
                   </div>
                   {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone}</p>}
                 </div>
+              </div>
+
+              {/* Area & Address */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-dark-gray">Area</label>
                   <div className="relative">
@@ -248,11 +270,8 @@ export function RegisterPage() {
                   </div>
                   {errors.area && <p className="mt-1 text-xs text-red-500">{errors.area}</p>}
                 </div>
-              </div>
-
-              {/* Address - Full width */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-dark-gray">Address</label>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-dark-gray">Address</label>
                 <div className="relative">
                   <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,6 +290,7 @@ export function RegisterPage() {
                   />
                 </div>
                 {errors.address && <p className="mt-1 text-xs text-red-500">{errors.address}</p>}
+                </div>
               </div>
 
               {/* Password & Confirm Password */}

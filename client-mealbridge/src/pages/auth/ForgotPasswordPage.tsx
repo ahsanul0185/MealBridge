@@ -89,7 +89,7 @@ export function ForgotPasswordPage() {
                 <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-center">
                   <p className="text-sm font-medium text-green-800">Reset link sent!</p>
                   <p className="mt-1 text-sm text-green-700">
-                    If an account exists for <strong>{email}</strong>, you'll receive an email with instructions.
+                    A reset link has been sent to <strong>{email}</strong>.
                   </p>
                   <Link
                     to="/login"
