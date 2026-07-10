@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { register } from "../../services/auth.service";
 import { Button } from "../../components/common/Button";
+import { AddressAutocomplete } from "../../components/common/AddressAutocomplete";
 import toast from "react-hot-toast";
 
 interface FormErrors {
@@ -270,27 +271,19 @@ export function RegisterPage() {
                   </div>
                   {errors.area && <p className="mt-1 text-xs text-red-500">{errors.area}</p>}
                 </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-dark-gray">Address</label>
-                <div className="relative">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted">
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Enter full address"
-                    className={`focus-ring block w-full rounded-lg border bg-white py-2.5 pl-10 pr-3 text-sm text-dark-gray placeholder:text-text-muted ${
-                      errors.address ? "border-red-400" : "border-border focus:border-primary"
-                    }`}
-                  />
-                </div>
-                {errors.address && <p className="mt-1 text-xs text-red-500">{errors.address}</p>}
-                </div>
+                <AddressAutocomplete
+                  id="register-address"
+                  label="Address"
+                  value={address}
+                  onChange={setAddress}
+                  onSelect={() => {}}
+                  onAreaChange={setArea}
+                  placeholder="Start typing your address..."
+                  error={errors.address}
+                  required
+                  countryCodes="in"
+                  // helperText="Start typing to see address suggestions"
+                />
               </div>
 
               {/* Password & Confirm Password */}
