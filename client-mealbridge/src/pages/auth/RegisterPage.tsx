@@ -85,9 +85,10 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-warm-white">
+    <div className="min-h-[calc(100vh-64px)] bg-warm-white">
+      <div className="mx-auto flex items-start max-w-7xl min-h-[calc(100vh-64px)] px-4 sm:px-6 lg:px-8">
       {/* Left Side - Hero */}
-      <div className="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-white lg:flex">
+      <div className="relative hidden w-[45%] flex-col justify-between overflow-hidden bg-white py-14 pr-12 pl-2 lg:flex">
         <div>
           <h1 className="text-5xl font-bold leading-[1.15] tracking-tight text-dark-gray">
             Good food
@@ -110,8 +111,8 @@ export function RegisterPage() {
 
       {/* Right Side - Form */}
       <div className="flex flex-1 flex-col">
-        <div className="flex flex-1 items-center justify-center px-4 pb-8 sm:px-8">
-          <div className="w-full max-w-[620px] rounded-2xl border border-border bg-white p-8 shadow-card sm:p-10">
+        <div className="flex flex-1 items-center justify-center py-10">
+          <div className="w-full max-w-full rounded-2xl border border-border bg-white p-8 shadow-card sm:p-10">
             <h2 className="text-center text-2xl font-bold text-dark-gray">Create your account</h2>
             <p className="mb-8 mt-1 text-center text-sm text-text-secondary">
               Join MealBridge and make a difference.
@@ -374,6 +375,7 @@ export function RegisterPage() {
             </form>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
