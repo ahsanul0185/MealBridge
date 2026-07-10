@@ -22,4 +22,16 @@ router.post("/logout", authController.logout);
 
 router.get("/profile", checkAuth, authController.getProfile);
 
+router.post(
+  "/forgot-password",
+  validateRequest(authValidation.forgotPassword),
+  authController.forgotPassword
+);
+
+router.post(
+  "/reset-password/:token",
+  validateRequest(authValidation.resetPassword),
+  authController.resetPassword
+);
+
 export default router;

@@ -147,6 +147,12 @@ export function LoginPage() {
               </Button>
 
               <p className="text-center text-sm text-text-secondary">
+                <Link to="/forgot-password" className="font-medium text-primary hover:underline">
+                  Forgot password?
+                </Link>
+              </p>
+
+              <p className="text-center text-sm text-text-secondary">
                 Don't have an account?{" "}
                 <Link to="/register" className="font-medium text-primary hover:underline">
                   Create account

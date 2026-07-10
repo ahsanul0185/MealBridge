@@ -9,6 +9,16 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? [process.env.CLIENT_URL.replace(/\/$/, "")]
     : ["http://localhost:5173"];
 
+const parsePort = (value: string | undefined, defaultPort: number): number => {
+  const port = Number(value);
+  return Number.isNaN(port) ? defaultPort : port;
+};
+
+const parseBoolean = (value: string | undefined, defaultValue: boolean): boolean => {
+  if (value === undefined || value === "") return defaultValue;
+  return value.toLowerCase() === "true";
+};
+
 export default {
   NODE_ENV: process.env.NODE_ENV || "development",
   port: process.env.PORT || "5000",
@@ -21,4 +31,10 @@ export default {
     process.env.VERCEL === "1"
       ? "/tmp/mealbridge-uploads"
       : process.env.UPLOAD_FOLDER || "uploads",
+  smtp_host: process.env.SMTP_HOST || "",
+  smtp_port: parsePort(process.env.SMTP_PORT, 587),
+  smtp_secure: parseBoolean(process.env.SMTP_SECURE, false),
+  smtp_user: process.env.SMTP_USER || "",
+  smtp_pass: process.env.SMTP_PASS || "",
+  email_from: process.env.EMAIL_FROM || "MealBridge <no-reply@mealbridge.com>",
 };

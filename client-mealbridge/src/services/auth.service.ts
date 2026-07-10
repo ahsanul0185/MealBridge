@@ -15,6 +15,15 @@ export interface LoginData {
   password: string;
 }
 
+export interface ForgotPasswordData {
+  email: string;
+}
+
+export interface ResetPasswordData {
+  password: string;
+  confirmPassword: string;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -45,6 +54,12 @@ export interface ProfileResponse {
   data: User;
 }
 
+export interface MessageResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
 export const register = async (data: RegisterData): Promise<AuthResponse> => {
   const response = await api.post("/auth/register", data);
   return response.data;
@@ -61,5 +76,18 @@ export const logout = async (): Promise<void> => {
 
 export const getProfile = async (): Promise<ProfileResponse> => {
   const response = await api.get("/auth/profile");
+  return response.data;
+};
+
+export const forgotPassword = async (data: ForgotPasswordData): Promise<MessageResponse> => {
+  const response = await api.post("/auth/forgot-password", data);
+  return response.data;
+};
+
+export const resetPassword = async (
+  token: string,
+  data: ResetPasswordData
+): Promise<MessageResponse> => {
+  const response = await api.post(`/auth/reset-password/${token}`, data);
   return response.data;
 };

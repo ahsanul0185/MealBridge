@@ -7,6 +7,8 @@ import { PublicRoute } from "./components/layout/PublicRoute";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { RegisterPage } from "./pages/auth/RegisterPage";
+import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
+import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 import { RestaurantDashboard } from "./pages/restaurant/RestaurantDashboard";
 import { AddFoodDonation } from "./pages/restaurant/AddFoodDonation";
 import { EditFoodDonation } from "./pages/restaurant/EditFoodDonation";
@@ -29,6 +31,8 @@ function AppContent() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
+        <Route path="/reset-password" element={<PublicRoute><ResetPasswordPage /></PublicRoute>} />
 
         {/* Restaurant Routes - nested under DashboardLayout */}
         <Route

@@ -68,11 +68,34 @@ const getProfile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.forgotPassword(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.message,
+    data: null,
+  });
+});
+
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const { token } = req.params;
+  const result = await authService.resetPassword(token, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.message,
+    data: null,
+  });
+});
+
 const authController = {
   register,
   login,
   logout,
   getProfile,
+  forgotPassword,
+  resetPassword,
 };
 
 export default authController;

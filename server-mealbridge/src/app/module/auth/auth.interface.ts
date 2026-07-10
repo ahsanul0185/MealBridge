@@ -13,6 +13,15 @@ export interface ILoginPayload {
   password: string;
 }
 
+export interface IForgotPasswordPayload {
+  email: string;
+}
+
+export interface IResetPasswordPayload {
+  password: string;
+  confirmPassword: string;
+}
+
 export interface IAuthResponse {
   user: {
     id: string;
